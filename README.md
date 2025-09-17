@@ -88,39 +88,40 @@ cd PersianAIAssistant
 ./gradlew installDebug
 ```
 
-## ساخت APK با Codemagic
+## ساخت APK با GitHub Actions
 
-### تنظیم Codemagic
-1. حساب کاربری در [Codemagic.io](https://codemagic.io) ایجاد کنید
-2. پروژه را به Codemagic متصل کنید
-3. متغیرهای محیطی زیر را تنظیم کنید:
+### 🚀 Workflows موجود
+پروژه دارای چندین workflow برای build خودکار است:
 
-```yaml
-Environment Variables:
-- KEYSTORE_PATH: مسیر فایل keystore
-- KEYSTORE_PASSWORD: رمز keystore  
-- KEY_ALIAS: نام alias کلید
-- KEY_PASSWORD: رمز کلید
-- GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: اعتبارنامه Google Play
-```
+#### 1. Test Build (`test-build.yml`)
+- **هدف**: تست سریع و ساخت Debug APK
+- **تریگر**: Push به branch master/main یا اجرای دستی
+- **خروجی**: Debug APK
 
-### انواع Build
-```bash
-# APK امضا شده برای Play Store
-./gradlew assembleRelease
+#### 2. Complete Build (`complete-build.yml`)
+- **هدف**: ساخت کامل APK و AAB
+- **تریگر**: Push، Tag، یا اجرای دستی با انتخاب نوع build
+- **خروجی**: Debug/Release APK + AAB
+- **ویژگی‌ها**: 
+  - انتخاب نوع build (debug/release)
+  - ساخت هم‌زمان APK و AAB
+  - ایجاد خودکار Release برای Tag ها
 
-# APK بدون امضا برای تست
-./gradlew assembleUnsigned
+#### 3. Android CI/CD (`android-build.yml`)
+- **هدف**: CI/CD کامل با امکان signing
+- **ویژگی‌ها**: تست، build، signing، و release خودکار
 
-# Android App Bundle (AAB)
-./gradlew bundleRelease
-```
+### 📥 دانلود فایل‌ها
+پس از اجرای موفق workflow:
+1. به صفحه Actions پروژه بروید
+2. روی آخرین run کلیک کنید
+3. فایل‌های APK/AAB را از بخش Artifacts دانلود کنید
 
-### دانلود APK
-پس از اتمام build در Codemagic:
-1. به بخش Artifacts بروید
-2. فایل APK را دانلود کنید
-3. یا از طریق ایمیل دریافت کنید
+### 🔧 اجرای دستی Build
+1. به GitHub repository بروید
+2. Actions → Complete Build → Run workflow
+3. نوع build (debug/release) را انتخاب کنید
+4. Run workflow را کلیک کنید
 
 ## پیکربندی
 
