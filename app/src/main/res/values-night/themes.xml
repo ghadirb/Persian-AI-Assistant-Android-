@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme overrides -->
+    <style name="Theme.PersianAIAssistant" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/md_theme_dark_primary</item>
+        <item name="colorPrimaryVariant">@color/md_theme_dark_primaryContainer</item>
+        <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
+        
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/md_theme_dark_secondary</item>
+        <item name="colorSecondaryVariant">@color/md_theme_dark_secondaryContainer</item>
+        <item name="colorOnSecondary">@color/md_theme_dark_onSecondary</item>
+        
+        <!-- Background colors -->
+        <item name="android:windowBackground">@color/md_theme_dark_background</item>
+        <item name="android:colorBackground">@color/md_theme_dark_background</item>
+        <item name="colorBackground">@color/md_theme_dark_background</item>
+        <item name="colorOnBackground">@color/md_theme_dark_onBackground</item>
+        
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/md_theme_dark_surface</item>
+        <item name="colorOnSurface">@color/md_theme_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_dark_onSurfaceVariant</item>
+        
+        <!-- Error colors -->
+        <item name="colorError">@color/md_theme_dark_error</item>
+        <item name="colorOnError">@color/md_theme_dark_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_dark_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>
+        
+        <!-- Outline colors -->
+        <item name="colorOutline">@color/md_theme_dark_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_dark_outlineVariant</item>
+        
+        <!-- Chat bubbles -->
+        <item name="chat_bubble_user">@color/md_theme_dark_primary</item>
+        <item name="chat_bubble_ai">@color/md_theme_dark_surfaceVariant</item>
+        <item name="chat_text_user">@color/white</item>
+        <item name="chat_text_ai">@color/md_theme_dark_onSurface</item>
+        <item name="chat_time_user">#B3FFFFFF</item>
+        <item name="chat_time_ai">#99FFFFFF</item>
+        
+        <!-- Status bar color -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        
+        <!-- Navigation bar color -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@color/md_theme_dark_onBackground</item>
+        <item name="android:textColorSecondary">@color/md_theme_dark_onSurfaceVariant</item>
+        <item name="android:textColorHint">#61FFFFFF</item>
+        <item name="android:textColorLink">@color/md_theme_dark_primary</item>
+        
+        <!-- Ripple color -->
+        <item name="colorControlHighlight">@color/ripple_color_dark</item>
+        
+        <!-- Divider color -->
+        <item name="android:divider">@color/divider_dark</item>
+        
+        <!-- Switch colors -->
+        <item name="colorControlActivated">@color/md_theme_dark_primary</item>
+        <item name="colorSwitchThumbNormal">@color/md_theme_dark_onSurfaceVariant</item>
+        
+        <!-- Custom attributes -->
+        <item name="materialButtonTextStyle">@style/Widget.PersianAIAssistant.Button.TextButton</item>
+        <item name="contentInsetLeftWithNavigation">0dp</item>
+    </style>
+    
+    <!-- Full screen theme -->
+    <style name="Theme.PersianAIAssistant.FullScreen" parent="Theme.PersianAIAssistant">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+</resources>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Background gradient -->
+    <group android:scaleX="1.2" android:scaleY="1.2" android:pivotX="54" android:pivotY="54">
+        <path
+            android:fillType="evenOdd"
+            android:pathData="M54,54m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startColor="#FF1976D2"
+                    android:endColor="#FF0D47A1"
+                    android:type="radial"
+                    android:centerX="54"
+                    android:centerY="54"
+                    android:gradientRadius="40" />
+            </aapt:attr>
+        </path>
+    </group>
+    
+    <!-- Persian calligraphy inspired design -->
+    <group android:translateX="54" android:translateY="54">
+        <!-- Main AI brain symbol -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-16,-12 Q-20,-8 -16,-4 L-8,-4 Q-4,-8 -8,-12 Z
+                           M8,-12 Q12,-8 8,-4 L16,-4 Q20,-8 16,-12 Z
+                           M-8,4 Q-12,8 -8,12 L8,12 Q12,8 8,4 Z"
+            android:strokeWidth="1.5"
+            android:strokeColor="#E3F2FD" />
+        
+        <!-- Central Persian letter "ه" stylized -->
+        <path
+            android:fillColor="#FFB300"
+            android:pathData="M-6,-6 Q0,-10 6,-6 Q6,0 0,4 Q-6,0 -6,-6 Z" />
+        
+        <!-- Neural network connections -->
+        <group android:alpha="0.8">
+            <path
+                android:strokeColor="#E3F2FD"
+                android:strokeWidth="1"
+                android:pathData="M-12,-8 L-6,-6 M6,-6 L12,-8 M-6,-6 L6,-6 M0,4 L-8,8 M0,4 L8,8" />
+        </group>
+        
+        <!-- Decorative Persian pattern dots -->
+        <circle android:fillColor="#FFB300" cx="-14" cy="-10" r="1.5" />
+        <circle android:fillColor="#FFB300" cx="14" cy="-10" r="1.5" />
+        <circle android:fillColor="#FFB300" cx="-10" cy="10" r="1.5" />
+        <circle android:fillColor="#FFB300" cx="10" cy="10" r="1.5" />
+    </group>
+</vector>

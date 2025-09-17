@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="online_chat"
+        android:enabled="true"
+        android:icon="@drawable/ic_online_shortcut"
+        android:shortcutShortLabel="@string/online_mode"
+        android:shortcutLongLabel="@string/start_online_chat"
+        android:shortcutDisabledMessage="@string/shortcut_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.example.persianaiapp"
+            android:targetClass="com.example.persianaiapp.MainActivity">
+            <extra android:name="shortcut_action" android:value="online_chat" />
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="offline_chat"
+        android:enabled="true"
+        android:icon="@drawable/ic_offline_shortcut"
+        android:shortcutShortLabel="@string/offline_mode"
+        android:shortcutLongLabel="@string/start_offline_chat"
+        android:shortcutDisabledMessage="@string/shortcut_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.example.persianaiapp"
+            android:targetClass="com.example.persianaiapp.MainActivity">
+            <extra android:name="shortcut_action" android:value="offline_chat" />
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="voice_assistant"
+        android:enabled="true"
+        android:icon="@drawable/ic_voice_shortcut"
+        android:shortcutShortLabel="@string/voice_assistant"
+        android:shortcutLongLabel="@string/start_voice_assistant"
+        android:shortcutDisabledMessage="@string/shortcut_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.example.persianaiapp"
+            android:targetClass="com.example.persianaiapp.MainActivity">
+            <extra android:name="shortcut_action" android:value="voice_assistant" />
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>

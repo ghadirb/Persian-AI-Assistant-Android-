@@ -1,0 +1,57 @@
+// Gradle initialization script for Iranian users
+// This script helps resolve dependency download issues in Iran
+
+allprojects {
+    repositories {
+        // Try Iranian mirrors first
+        def iranianMirrors = [
+            'https://maven.aliyun.com/repository/google',
+            'https://maven.aliyun.com/repository/central',
+            'https://maven.aliyun.com/repository/gradle-plugin',
+            'https://repo.maven.apache.org/maven2',
+            'https://dl.google.com/dl/android/maven2'
+        ]
+        
+        // Add Iranian mirrors with content filtering
+        iranianMirrors.each { url ->
+            maven {
+                url url
+                content {
+                    // Include all Google and Android libraries
+                    includeGroupByRegex "com\\.android.*"
+                    includeGroupByRegex "com\\.google.*"
+                    includeGroupByRegex "androidx.*"
+                    includeGroupByRegex "org\\.jetbrains.*"
+                    includeGroupByRegex "org\\.kotlin.*"
+                    includeGroup "dagger"
+                    includeGroup "javax.inject"
+                }
+            }
+        }
+        
+        // Original repositories as fallback
+        google {
+            content {
+                includeGroupByRegex "com\\.android.*"
+                includeGroupByRegex "com\\.google.*"
+                includeGroupByRegex "androidx.*"
+            }
+        }
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+// Configure HTTP settings for better connectivity
+gradle.projectsLoaded {
+    allprojects {
+        afterEvaluate { project ->
+            if (project.hasProperty('android')) {
+                android {
+                    // Enable AndroidX
+                    useLibrary 'androidx.appcompat'
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,134 @@
+workflows:
+  android-workflow:
+    name: Persian AI Assistant Android Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      # android_signing:
+      #   - keystore_reference
+      groups:
+        - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
+      vars:
+        PACKAGE_NAME: "com.example.persianaiapp"
+        GOOGLE_PLAY_TRACK: "internal" # Any default or custom track
+      java: 17
+      node: 16
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.android/build-cache
+    triggering:
+      events:
+        - push
+        - tag
+        - pull_request
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+          source: true
+        - pattern: 'develop'
+          include: true
+          source: true
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+      
+      - name: Get Flutter packages
+        script: |
+          # اگر از Flutter استفاده می‌کنید این بخش را فعال کنید
+          # flutter packages pub get
+          
+      - name: Set up keystore
+        script: |
+          # Only set up keystore if CM_KEYSTORE is available
+          if [ ! -z "$CM_KEYSTORE" ]; then
+            echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
+            export KEYSTORE_PATH="/tmp/keystore.keystore"
+            echo "Keystore configured for signing"
+          else
+            echo "No keystore configured - building unsigned APK"
+          fi
+          
+      - name: Generate debug keystore
+        script: |
+          # Generate debug keystore if it doesn't exist
+          if [ ! -f "app/debug.keystore" ]; then
+            echo "Generating debug keystore..."
+            keytool -genkeypair -v \
+              -keystore app/debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -dname "CN=Android Debug,O=Android,C=US" \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000
+            echo "Debug keystore generated successfully"
+          else
+            echo "Debug keystore already exists"
+          fi
+          
+      - name: Build Android APK and AAB
+        script: |
+          chmod +x ./gradle-build.sh
+          ./gradle-build.sh
+          
+    artifacts:
+      - app/build/outputs/**/*.apk
+      - app/build/outputs/**/*.aab
+      - app/build/outputs/**/mapping.txt
+      
+    publishing:
+      # فقط ارسال ایمیل با فایل APK
+      email:
+        recipients:
+          - your-email@gmail.com  # ایمیل خودتان را اینجا بنویسید
+        notify:
+          success: true
+          failure: true
+          
+  # Workflow برای ساخت APK بدون امضا (برای تست)
+  android-unsigned:
+    name: Persian AI Assistant - Unsigned APK
+    max_build_duration: 30
+    instance_type: mac_mini_m1
+    environment:
+      java: 17
+      node: 16
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.android/build-cache
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'develop'
+          include: true
+          source: true
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+          
+      - name: Build unsigned APK
+        script: |
+          chmod +x ./gradle-build.sh
+          ./gradle-build.sh
+          
+      - name: Rename APK
+        script: |
+          cd app/build/outputs/apk/debug
+          mv app-debug.apk persian-ai-assistant-unsigned-$(date +%Y%m%d-%H%M%S).apk
+          
+    artifacts:
+      - app/build/outputs/apk/unsigned/*.apk
+      
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
