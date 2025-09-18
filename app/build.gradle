@@ -83,10 +83,6 @@ android {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
-        // Keep all native libraries
-        pickFirst '**/libc++_shared.so'
-        pickFirst '**/libvosk.so'
-        pickFirst '**/META-INF/kotlinx-coroutines-core.kotlin_module'
     }
 }
 

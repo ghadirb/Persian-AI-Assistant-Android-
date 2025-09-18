@@ -31,7 +31,7 @@ jobs:
     - name: Build APK
       run: |
         echo "=== Building APK ==="
-        ./gradlew assembleDebug --info --no-daemon
+        ./gradlew assembleDebug --console=plain
     
     - name: Check results
       run: |

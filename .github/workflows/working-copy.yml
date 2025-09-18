@@ -1,0 +1,59 @@
+name: Working Copy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+    
+    - name: Grant execute permission for gradlew
+      run: |
+        echo "=== Gradlew Setup ==="
+        chmod +x gradlew
+        ls -la gradlew
+    
+    - name: Clean project
+      run: |
+        echo "=== Cleaning Project ==="
+        ./gradlew clean --console=plain
+    
+    - name: Build debug APK
+      run: |
+        echo "=== Building Debug APK ==="
+        ./gradlew assembleDebug --console=plain
+    
+    - name: Check build results
+      run: |
+        echo "=== Build Results ==="
+        if [ -d "app/build/outputs/apk/debug" ]; then
+          echo "Debug APK directory exists:"
+          ls -la app/build/outputs/apk/debug/
+        else
+          echo "Debug APK directory not found"
+        fi
+        
+        echo "Searching for any APK files:"
+        find . -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
+    
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: working-copy-apk
+        path: app/build/outputs/apk/debug/*.apk
+        if-no-files-found: ignore
