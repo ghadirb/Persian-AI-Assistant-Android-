@@ -1,0 +1,36 @@
+name: Docker Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: cimg/android:2023.12
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Check environment
+      run: |
+        echo "=== Environment Check ==="
+        java -version
+        echo "ANDROID_HOME: $ANDROID_HOME"
+        ls -la $ANDROID_HOME 2>/dev/null || echo "No ANDROID_HOME"
+        which gradle || echo "No gradle"
+    
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+    
+    - name: Build with container
+      run: |
+        echo "=== Building in container ==="
+        ./gradlew clean assembleDebug --no-daemon --stacktrace
+    
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: docker-build-apk
+        path: app/build/outputs/apk/debug/*.apk
