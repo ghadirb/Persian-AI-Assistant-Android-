@@ -1,4 +1,4 @@
-name: Manual Build
+name: Manual Build (APK/AAB)
 
 on:
   workflow_dispatch:

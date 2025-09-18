@@ -1,4 +1,4 @@
-name: Quick Test
+name: Quick Test Build
 
 on:
   workflow_dispatch:
