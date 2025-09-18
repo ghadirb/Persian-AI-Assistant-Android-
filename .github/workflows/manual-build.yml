@@ -1,19 +1,16 @@
-name: Complete Build (APK + AAB)
+name: Manual Build
 
 on:
   workflow_dispatch:
     inputs:
       build_type:
-        description: 'Build Type'
+        description: 'Select Build Type'
         required: true
         default: 'debug'
         type: choice
         options:
         - debug
         - release
-  push:
-    branches: [ master, main ]
-    tags: [ 'v*' ]
 
 jobs:
   build:
@@ -52,44 +49,35 @@ jobs:
     - name: Clean Project
       run: ./gradlew clean
       
-    - name: Run Unit Tests
-      run: ./gradlew testDebugUnitTest --continue
-      continue-on-error: true
-      
     - name: Build Debug APK
-      if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == ''
+      if: github.event.inputs.build_type == 'debug'
       run: ./gradlew assembleDebug --stacktrace
       
-    - name: Build Release APK (unsigned)
+    - name: Build Release APK
       if: github.event.inputs.build_type == 'release'
       run: ./gradlew assembleRelease --stacktrace
       
     - name: Build Debug AAB
-      if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == ''
+      if: github.event.inputs.build_type == 'debug'
       run: ./gradlew bundleDebug --stacktrace
       continue-on-error: true
       
-    - name: Build Release AAB (unsigned)
+    - name: Build Release AAB
       if: github.event.inputs.build_type == 'release'
       run: ./gradlew bundleRelease --stacktrace
       continue-on-error: true
       
-    - name: List All Build Outputs
+    - name: List Build Outputs
       run: |
-        echo "=== All Build Outputs ==="
-        find app/build/outputs -type f \( -name "*.apk" -o -name "*.aab" \) 2>/dev/null || echo "No build outputs found"
-        echo ""
-        echo "=== APK Files ==="
-        find app/build/outputs -name "*.apk" -type f -exec ls -lh {} \; 2>/dev/null || echo "No APK files"
-        echo ""
-        echo "=== AAB Files ==="
-        find app/build/outputs -name "*.aab" -type f -exec ls -lh {} \; 2>/dev/null || echo "No AAB files"
+        echo "=== Build Outputs ==="
+        find app/build/outputs -name "*.apk" -type f 2>/dev/null || echo "No APK files"
+        find app/build/outputs -name "*.aab" -type f 2>/dev/null || echo "No AAB files"
         
     - name: Upload Debug APK
-      if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == ''
+      if: github.event.inputs.build_type == 'debug'
       uses: actions/upload-artifact@v4
       with:
-        name: persian-ai-debug-apk
+        name: debug-apk
         path: app/build/outputs/apk/debug/app-debug.apk
         if-no-files-found: warn
         
@@ -97,15 +85,15 @@ jobs:
       if: github.event.inputs.build_type == 'release'
       uses: actions/upload-artifact@v4
       with:
-        name: persian-ai-release-apk
+        name: release-apk
         path: app/build/outputs/apk/release/app-release-unsigned.apk
         if-no-files-found: warn
         
     - name: Upload Debug AAB
-      if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == ''
+      if: github.event.inputs.build_type == 'debug'
       uses: actions/upload-artifact@v4
       with:
-        name: persian-ai-debug-aab
+        name: debug-aab
         path: app/build/outputs/bundle/debug/app-debug.aab
         if-no-files-found: ignore
         
@@ -113,20 +101,9 @@ jobs:
       if: github.event.inputs.build_type == 'release'
       uses: actions/upload-artifact@v4
       with:
-        name: persian-ai-release-aab
+        name: release-aab
         path: app/build/outputs/bundle/release/app-release.aab
         if-no-files-found: ignore
-        
-    - name: Create GitHub Release
-      if: startsWith(github.ref, 'refs/tags/v')
-      uses: softprops/action-gh-release@v2
-      with:
-        files: |
-          app/build/outputs/apk/release/app-release-unsigned.apk
-          app/build/outputs/bundle/release/app-release.aab
-        generate_release_notes: true
-        draft: false
-        prerelease: false
         
     - name: Build Summary
       if: always()
@@ -135,44 +112,38 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         
         BUILD_TYPE="${{ github.event.inputs.build_type }}"
-        if [ -z "$BUILD_TYPE" ]; then
-          BUILD_TYPE="debug"
-        fi
-        
-        echo "**Build Type**: $BUILD_TYPE" >> $GITHUB_STEP_SUMMARY
+        echo "**Selected Build Type**: $BUILD_TYPE" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "| File Type | Status | Size |" >> $GITHUB_STEP_SUMMARY
-        echo "|-----------|--------|------|" >> $GITHUB_STEP_SUMMARY
         
         if [ "$BUILD_TYPE" = "debug" ]; then
           if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
             APK_SIZE=$(du -h app/build/outputs/apk/debug/app-debug.apk | cut -f1)
-            echo "| Debug APK | ✅ Success | $APK_SIZE |" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Debug APK**: Built successfully ($APK_SIZE)" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Debug APK | ❌ Failed | - |" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **Debug APK**: Build failed" >> $GITHUB_STEP_SUMMARY
           fi
           
           if [ -f "app/build/outputs/bundle/debug/app-debug.aab" ]; then
             AAB_SIZE=$(du -h app/build/outputs/bundle/debug/app-debug.aab | cut -f1)
-            echo "| Debug AAB | ✅ Success | $AAB_SIZE |" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Debug AAB**: Built successfully ($AAB_SIZE)" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Debug AAB | ❌ Failed | - |" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **Debug AAB**: Build failed (optional)" >> $GITHUB_STEP_SUMMARY
           fi
         else
           if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
             APK_SIZE=$(du -h app/build/outputs/apk/release/app-release-unsigned.apk | cut -f1)
-            echo "| Release APK | ✅ Success | $APK_SIZE |" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Release APK**: Built successfully ($APK_SIZE)" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Release APK | ❌ Failed | - |" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **Release APK**: Build failed" >> $GITHUB_STEP_SUMMARY
           fi
           
           if [ -f "app/build/outputs/bundle/release/app-release.aab" ]; then
             AAB_SIZE=$(du -h app/build/outputs/bundle/release/app-release.aab | cut -f1)
-            echo "| Release AAB | ✅ Success | $AAB_SIZE |" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Release AAB**: Built successfully ($AAB_SIZE)" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Release AAB | ❌ Failed | - |" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **Release AAB**: Build failed (optional)" >> $GITHUB_STEP_SUMMARY
           fi
         fi
         
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "📥 **Download**: Check the Artifacts section above to download the built files" >> $GITHUB_STEP_SUMMARY
+        echo "📥 **Download**: Check the Artifacts section above" >> $GITHUB_STEP_SUMMARY
