@@ -25,10 +25,13 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            // Use default debug keystore for CI builds
+            if (file('debug.keystore').exists()) {
+                storeFile file('debug.keystore')
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
         }
     }
 
@@ -37,7 +40,9 @@ android {
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
             debuggable true
-            signingConfig signingConfigs.debug
+            if (file('debug.keystore').exists()) {
+                signingConfig signingConfigs.debug
+            }
         }
         
         release {

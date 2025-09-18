@@ -1,0 +1,53 @@
+name: Dependency Check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - uses: android-actions/setup-android@v3
+    
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+    
+    - name: Check Gradle version
+      run: ./gradlew --version
+    
+    - name: Check project structure
+      run: |
+        echo "=== Project files ==="
+        ls -la
+        echo ""
+        echo "=== App directory ==="
+        ls -la app/
+        echo ""
+        echo "=== Gradle files ==="
+        ls -la *.gradle
+    
+    - name: Check dependencies
+      run: |
+        echo "=== Root project dependencies ==="
+        ./gradlew dependencies --configuration classpath || echo "Classpath check failed"
+        echo ""
+        echo "=== App dependencies ==="
+        ./gradlew :app:dependencies --configuration debugCompileClasspath || echo "App dependencies check failed"
+    
+    - name: Try clean only
+      run: |
+        echo "=== Trying clean ==="
+        ./gradlew clean -i || echo "Clean failed"
+    
+    - name: Check after clean
+      run: |
+        echo "=== After clean ==="
+        ls -la app/build/ 2>/dev/null || echo "No build directory (expected)"
