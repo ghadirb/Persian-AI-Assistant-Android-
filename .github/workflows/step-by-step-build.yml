@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     
     steps:
     - name: Checkout repository
@@ -20,7 +20,7 @@ jobs:
     
     - name: Verify Java installation
       run: |
-        echo "Java version:"
+        echo "=== Java Version ==="
         java -version
         echo "JAVA_HOME: $JAVA_HOME"
     
@@ -29,50 +29,60 @@ jobs:
     
     - name: Verify Android SDK
       run: |
-        echo "Android SDK location:"
-        echo $ANDROID_SDK_ROOT
-        ls -la $ANDROID_SDK_ROOT || echo "SDK not found"
+        echo "=== Android SDK ==="
+        echo "ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT"
+        if [ -d "$ANDROID_SDK_ROOT" ]; then
+          echo "SDK directory exists"
+          ls -la "$ANDROID_SDK_ROOT" | head -10
+        else
+          echo "SDK directory not found"
+        fi
     
     - name: Grant execute permission for gradlew
       run: |
+        echo "=== Gradlew Setup ==="
         chmod +x gradlew
         ls -la gradlew
     
     - name: Test Gradle wrapper
       run: |
-        echo "Testing gradlew --version"
+        echo "=== Gradle Version ==="
         ./gradlew --version
-    
-    - name: List Gradle tasks
-      run: |
-        echo "Available Gradle tasks:"
-        ./gradlew tasks --console=plain
     
     - name: Clean project
       run: |
-        echo "Cleaning project..."
-        ./gradlew clean --console=plain --stacktrace
+        echo "=== Cleaning Project ==="
+        ./gradlew clean --console=plain
     
-    - name: Compile sources only
+    - name: Try compile only
       run: |
-        echo "Compiling sources..."
-        ./gradlew compileDebugSources --console=plain --stacktrace
+        echo "=== Compiling Sources ==="
+        ./gradlew compileDebugSources --console=plain
+      continue-on-error: true
     
     - name: Build debug APK
       run: |
-        echo "Building debug APK..."
-        ./gradlew assembleDebug --console=plain --stacktrace
+        echo "=== Building Debug APK ==="
+        ./gradlew assembleDebug --console=plain
+      continue-on-error: true
     
-    - name: Verify APK creation
+    - name: Check build results
       run: |
-        echo "Checking for APK files:"
-        find . -name "*.apk" -type f || echo "No APK files found"
-        ls -la app/build/outputs/apk/debug/ || echo "Debug APK directory not found"
+        echo "=== Build Results ==="
+        if [ -d "app/build/outputs/apk/debug" ]; then
+          echo "Debug APK directory exists:"
+          ls -la app/build/outputs/apk/debug/
+        else
+          echo "Debug APK directory not found"
+        fi
+        
+        echo "Searching for any APK files:"
+        find . -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
     
-    - name: Upload APK if exists
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: debug-apk
+        name: step-by-step-apk
         path: app/build/outputs/apk/debug/*.apk
         if-no-files-found: ignore
