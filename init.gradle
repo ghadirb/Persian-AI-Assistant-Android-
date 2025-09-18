@@ -3,42 +3,35 @@
 
 allprojects {
     repositories {
-        // Try Iranian mirrors first
-        def iranianMirrors = [
-            'https://maven.aliyun.com/repository/google',
-            'https://maven.aliyun.com/repository/central',
-            'https://maven.aliyun.com/repository/gradle-plugin',
-            'https://repo.maven.apache.org/maven2',
-            'https://dl.google.com/dl/android/maven2'
-        ]
-        
-        // Add Iranian mirrors with content filtering
-        iranianMirrors.each { url ->
-            maven {
-                url url
-                content {
-                    // Include all Google and Android libraries
-                    includeGroupByRegex "com\\.android.*"
-                    includeGroupByRegex "com\\.google.*"
-                    includeGroupByRegex "androidx.*"
-                    includeGroupByRegex "org\\.jetbrains.*"
-                    includeGroupByRegex "org\\.kotlin.*"
-                    includeGroup "dagger"
-                    includeGroup "javax.inject"
-                }
-            }
-        }
-        
-        // Original repositories as fallback
-        google {
+        // Add Iranian mirrors first for faster access
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
             content {
                 includeGroupByRegex "com\\.android.*"
                 includeGroupByRegex "com\\.google.*"
                 includeGroupByRegex "androidx.*"
             }
         }
+        
+        maven {
+            url 'https://maven.aliyun.com/repository/central'
+            content {
+                includeGroupByRegex "org\\.jetbrains.*"
+                includeGroupByRegex "org\\.kotlin.*"
+                includeGroup "dagger"
+                includeGroup "javax.inject"
+            }
+        }
+        
+        maven {
+            url 'https://maven.aliyun.com/repository/gradle-plugin'
+        }
+        
+        // Original repositories as fallback
+        google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
+        gradlePluginPortal()
     }
 }
 
