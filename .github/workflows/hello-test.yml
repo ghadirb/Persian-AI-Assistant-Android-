@@ -1,0 +1,27 @@
+name: Hello Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Hello World
+      run: echo "Hello from GitHub Actions!"
+    
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: List files
+      run: ls -la
+    
+    - name: Check gradlew
+      run: |
+        if [ -f "gradlew" ]; then
+          echo "gradlew found"
+          ls -la gradlew
+        else
+          echo "gradlew not found"
+        fi
