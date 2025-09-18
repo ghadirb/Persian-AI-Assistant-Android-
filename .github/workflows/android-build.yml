@@ -1,20 +1,9 @@
-name: Android CI/CD
+name: Auto Build (Push)
 
 on:
   push:
-    branches: [ main, master, develop ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ master, main ]
   workflow_dispatch:
-    inputs:
-      build_type:
-        description: 'Build Type'
-        required: true
-        default: 'release'
-        type: choice
-        options:
-        - debug
-        - release
 
 jobs:
   build:
@@ -49,76 +38,12 @@ jobs:
     - name: Clean project
       run: ./gradlew clean
       
-    - name: Run tests
-      run: ./gradlew test
-      continue-on-error: true
-      
     - name: Build Debug APK
-      if: github.event.inputs.build_type == 'debug' || github.event_name != 'workflow_dispatch'
-      run: ./gradlew assembleDebug
-      
-    - name: Build Release APK
-      if: github.event.inputs.build_type == 'release' || github.event_name != 'workflow_dispatch'
-      run: ./gradlew assembleRelease
-      
-    - name: Build Release AAB
-      if: github.event.inputs.build_type == 'release' || github.event_name != 'workflow_dispatch'
-      run: ./gradlew bundleRelease
-      
-    - name: Sign APK
-      if: github.event.inputs.build_type == 'release' || github.event_name != 'workflow_dispatch'
-      uses: r0adkll/sign-android-release@v1
-      id: sign_app
-      with:
-        releaseDirectory: app/build/outputs/apk/release
-        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: ${{ secrets.ALIAS }}
-        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-        keyPassword: ${{ secrets.KEY_PASSWORD }}
-      env:
-        BUILD_TOOLS_VERSION: "34.0.0"
+      run: ./gradlew assembleDebug --stacktrace
         
     - name: Upload Debug APK
-      if: github.event.inputs.build_type == 'debug' || github.event_name != 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
-        name: persian-ai-assistant-debug
-        path: app/build/outputs/apk/debug/*.apk
-        
-    - name: Upload Release APK
-      if: github.event.inputs.build_type == 'release' || github.event_name != 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
-      with:
-        name: persian-ai-assistant-release-apk
-        path: app/build/outputs/apk/release/*.apk
-        
-    - name: Upload Release AAB
-      if: github.event.inputs.build_type == 'release' || github.event_name != 'workflow_dispatch'
-      uses: actions/upload-artifact@v4
-      with:
-        name: persian-ai-assistant-release-aab
-        path: app/build/outputs/bundle/release/*.aab
-        
-    - name: Create Release
-      if: github.ref == 'refs/heads/main' && (github.event.inputs.build_type == 'release' || github.event_name != 'workflow_dispatch')
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: v${{ github.run_number }}
-        name: Persian AI Assistant v${{ github.run_number }}
-        body: |
-          ## Persian AI Assistant Release
-          
-          ### Changes in this version:
-          - Automated build from commit ${{ github.sha }}
-          
-          ### Downloads:
-          - **APK**: For direct installation on Android devices
-          - **AAB**: For Google Play Store distribution
-          
-        files: |
-          app/build/outputs/apk/release/*.apk
-          app/build/outputs/bundle/release/*.aab
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: auto-build-debug-apk
+        path: app/build/outputs/apk/debug/app-debug.apk
+        if-no-files-found: warn
