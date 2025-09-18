@@ -24,16 +24,6 @@ android {
     }
 
     signingConfigs {
-        release {
-            // برای امضای Play Store - این مقادیر باید از environment variables یا keystore خوانده شوند
-            def keystorePath = System.getenv("KEYSTORE_PATH")
-            if (keystorePath && file(keystorePath).exists()) {
-                storeFile file(keystorePath)
-                storePassword System.getenv("KEYSTORE_PASSWORD")
-                keyAlias System.getenv("KEY_ALIAS")
-                keyPassword System.getenv("KEY_PASSWORD")
-            }
-        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -51,25 +41,10 @@ android {
         }
         
         release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            // Always sign release builds for better compatibility
-            if (signingConfigs.release.storeFile != null) {
-                signingConfig signingConfigs.release
-            } else {
-                // Use debug signing for release when no production keystore is available
-                signingConfig signingConfigs.debug
-            }
+            minifyEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
             debuggable false
-        }
-        
-        // نسخه برای تست بدون امضا
-        unsigned {
-            initWith release
-            signingConfig null
-            applicationIdSuffix ".unsigned"
-            versionNameSuffix "-unsigned"
         }
     }
     compileOptions {

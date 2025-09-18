@@ -1,0 +1,58 @@
+name: Test Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 34
+        
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      
+    - name: Show project structure
+      run: |
+        echo "=== Root files ==="
+        ls -la
+        echo "=== App directory ==="
+        ls -la app/
+        echo "=== Gradle wrapper ==="
+        ls -la gradle/wrapper/
+        
+    - name: Check Gradle version
+      run: ./gradlew --version
+      
+    - name: Clean project
+      run: ./gradlew clean
+      
+    - name: Try to build debug
+      run: ./gradlew assembleDebug --stacktrace --info
+      
+    - name: List outputs
+      run: |
+        echo "=== Build outputs ==="
+        find app/build -name "*.apk" 2>/dev/null || echo "No APK found"
+        ls -la app/build/outputs/ 2>/dev/null || echo "No outputs directory"
+        
+    - name: Upload APK if exists
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-apk
+        path: app/build/outputs/apk/debug/*.apk
+        if-no-files-found: ignore
