@@ -88,7 +88,7 @@ cd PersianAIAssistant
 ./gradlew installDebug
 ```
 
-## ساخت APK با GitHub Actions
+## ساخت APK با GitHub Actions ✅
 
 ### 🚀 Workflows موجود
 پروژه دارای چندین workflow برای build خودکار است:
