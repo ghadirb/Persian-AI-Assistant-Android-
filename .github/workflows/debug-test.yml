@@ -1,0 +1,51 @@
+name: Debug Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: List files
+      run: |
+        echo "=== Root directory ==="
+        ls -la
+        echo ""
+        echo "=== App directory ==="
+        ls -la app/ || echo "No app directory"
+        echo ""
+        echo "=== Gradle files ==="
+        ls -la *.gradle || echo "No gradle files"
+        echo ""
+        echo "=== Gradle wrapper ==="
+        ls -la gradlew* || echo "No gradlew"
+    
+    - name: Check gradlew permissions
+      run: |
+        if [ -f "gradlew" ]; then
+          echo "gradlew exists"
+          ls -la gradlew
+          file gradlew
+        else
+          echo "gradlew not found"
+        fi
+    
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Java version
+      run: java -version
+    
+    - name: Try gradlew version
+      run: |
+        chmod +x gradlew || echo "chmod failed"
+        ./gradlew --version || echo "gradlew version failed"
