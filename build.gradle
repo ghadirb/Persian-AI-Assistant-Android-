@@ -8,14 +8,9 @@ buildscript {
         nav_version = '2.7.5'
     }
     repositories {
-        // Iranian mirrors for better access from Iran
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/central' }
-        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        
-        // Original repositories (as fallback)
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.0.2'
