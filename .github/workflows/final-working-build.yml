@@ -1,0 +1,49 @@
+name: Final Working Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+        
+    - name: Setup Java 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 33
+        build-tools-version: '33.0.2'
+        
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      
+    - name: Clean and Build
+      run: |
+        echo "Starting build process..."
+        ./gradlew clean --no-daemon --stacktrace
+        echo "Clean completed, starting assembleDebug..."
+        ./gradlew assembleDebug --no-daemon --stacktrace --info
+        
+    - name: Verify APK
+      run: |
+        echo "Checking for APK files..."
+        find app/build/outputs -name "*.apk" -type f
+        ls -la app/build/outputs/apk/debug/ || echo "Debug folder not found"
+        
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-final-apk
+        path: app/build/outputs/apk/debug/*.apk
+        retention-days: 7
+        if-no-files-found: error

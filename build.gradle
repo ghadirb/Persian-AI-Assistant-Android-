@@ -2,8 +2,8 @@
 buildscript {
     ext {
         // Core
-        kotlin_version = '1.9.10'
-        agp_version = '8.1.0'
+        kotlin_version = '1.8.10'
+        agp_version = '7.4.2'
         
         // Compose
         compose_version = '1.5.4'
