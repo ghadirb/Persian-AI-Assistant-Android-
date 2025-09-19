@@ -90,13 +90,6 @@ android {
     }
 }
 
-repositories {
-    google()
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-}
-
 dependencies {
     // AndroidX Core
     implementation "androidx.core:core-ktx:$core_ktx_version"
@@ -107,12 +100,12 @@ dependencies {
     implementation "androidx.activity:activity-compose:$activity_compose_version"
     
     // Compose
-    implementation platform("androidx.compose:compose-bom:2023.10.01")
+    implementation platform("androidx.compose:compose-bom:2023.08.00")
     implementation "androidx.compose.ui:ui"
     implementation "androidx.compose.ui:ui-graphics"
     implementation "androidx.compose.ui:ui-tooling-preview"
-    implementation "androidx.compose.material3:material3:$material3_version"
-    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    implementation "androidx.compose.material3:material3"
+    implementation "androidx.compose.material:material-icons-extended"
     
     // Navigation
     implementation "androidx.navigation:navigation-compose:$nav_version"
@@ -165,7 +158,7 @@ dependencies {
     
     // Security
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
-    implementation 'com.google.crypto.tink:tink-android:1.10.0'
+    implementation 'com.google.crypto.tink:tink-android:1.9.0'
     
     // Biometric
     implementation 'androidx.biometric:biometric:1.1.0'
@@ -186,9 +179,9 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
+    debugImplementation "androidx.compose.ui:ui-tooling"
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
     
     // MockK for testing
     testImplementation 'io.mockk:mockk:1.13.5'

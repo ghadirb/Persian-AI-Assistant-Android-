@@ -1,0 +1,48 @@
+name: Ultra Simple Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+        
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 34
+        
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      
+    - name: Create directories
+      run: |
+        mkdir -p app/schemas
+        ls -la
+        
+    - name: Build Debug APK
+      run: |
+        ./gradlew clean
+        ./gradlew assembleDebug --stacktrace --no-daemon
+      env:
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+        
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-debug-apk
+        path: app/build/outputs/apk/debug/*.apk
+        retention-days: 7
