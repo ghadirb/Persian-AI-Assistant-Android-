@@ -1,0 +1,43 @@
+name: Debug Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+        
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      
+    - name: Check Gradle Version
+      run: ./gradlew --version
+      
+    - name: List Project Structure
+      run: |
+        echo "=== Root Directory ==="
+        ls -la
+        echo "=== App Directory ==="
+        ls -la app/
+        echo "=== Gradle Files ==="
+        cat gradle.properties
+        echo "=== Build.gradle ==="
+        head -50 build.gradle
+        
+    - name: Check Dependencies
+      run: ./gradlew dependencies --configuration implementation
+      continue-on-error: true
+      
+    - name: Try Clean
+      run: ./gradlew clean --stacktrace --info
