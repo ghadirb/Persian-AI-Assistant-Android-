@@ -1,11 +1,30 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
+        // Core
         kotlin_version = '1.9.10'
+        agp_version = '8.1.1'
+        
+        // Compose
         compose_version = '1.5.4'
+        compose_compiler_version = '1.5.4'
+        
+        // Dagger Hilt
         hilt_version = '2.48'
-        room_version = '2.5.0'
-        nav_version = '2.7.4'
+        
+        // Navigation
+        nav_version = '2.7.5'
+        
+        // Room
+        room_version = '2.6.1'
+        
+        // Other
+        core_ktx_version = '1.12.0'
+        appcompat_version = '1.6.1'
+        material_version = '1.10.0'
+        lifecycle_version = '2.6.2'
+        activity_compose_version = '1.8.0'
+        material3_version = '1.2.0'
     }
     repositories {
         google()
@@ -13,7 +32,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.1'
+        classpath "com.android.tools.build:gradle:$agp_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
