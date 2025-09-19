@@ -11,7 +11,7 @@ workflows:
       vars:
         PACKAGE_NAME: "com.example.persianaiapp"
         GOOGLE_PLAY_TRACK: "internal" # Any default or custom track
-      java: 17
+      java: 11
       node: 16
     cache:
       cache_paths:
@@ -94,7 +94,7 @@ workflows:
     max_build_duration: 30
     instance_type: mac_mini_m1
     environment:
-      java: 17
+      java: 11
       node: 16
     cache:
       cache_paths:

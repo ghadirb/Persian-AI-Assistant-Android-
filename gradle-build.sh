@@ -1,24 +1,20 @@
 #!/bin/bash
 set -e
 
+echo "=== Starting Persian AI Assistant Build ==="
+echo "Using minimal configuration for compatibility"
+
+echo ""
 echo "=== Cleaning project ==="
-gradle clean
+./gradlew clean --no-daemon --stacktrace
 
 echo ""
-echo "=== Listing Gradle projects ==="
-gradle projects
+echo "=== Building Debug APK (Minimal Version) ==="
+./gradlew assembleDebug --no-daemon --stacktrace --info
 
 echo ""
-echo "=== Listing available tasks ==="
-gradle tasks --all
-
-echo ""
-echo "=== Building APK ==="
-gradle assembleRelease
-
-echo ""
-echo "=== Building AAB ==="
-gradle bundleRelease
+echo "=== Checking build outputs ==="
+find app/build/outputs -name "*.apk" -type f || echo "No APK files found"
 
 echo ""
 echo "=== Build completed successfully ==="
