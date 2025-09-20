@@ -74,6 +74,11 @@ workflows:
         script: |
           echo "=== Starting Persian AI Assistant Build ==="
           echo "Using Java $(java -version 2>&1 | head -n 1)"
+          
+          # Make gradlew executable
+          chmod +x ./gradlew
+          echo "Made gradlew executable"
+          
           echo "Using Gradle $(./gradlew --version | grep Gradle)"
           
           echo ""
