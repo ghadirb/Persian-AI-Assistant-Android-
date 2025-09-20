@@ -100,8 +100,21 @@ workflows:
           
           echo ""
           echo "=== Checking build outputs ==="
-          find app/build/outputs -name "*.apk" -type f || echo "No APK files found"
-          find app/build/outputs -name "*.aab" -type f || echo "No AAB files found"
+          echo "Listing all build directories:"
+          ls -la app/build/ || echo "No build directory"
+          
+          echo ""
+          echo "Searching for APK files:"
+          find . -name "*.apk" -type f 2>/dev/null || echo "No APK files found anywhere"
+          
+          echo ""
+          echo "Checking specific output directories:"
+          if [ -d "app/build/outputs" ]; then
+            echo "Contents of app/build/outputs:"
+            find app/build/outputs -type f 2>/dev/null || echo "No files in outputs"
+          else
+            echo "app/build/outputs directory does not exist"
+          fi
           
           echo ""
           echo "=== Build completed successfully ==="
