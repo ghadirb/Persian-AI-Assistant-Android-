@@ -117,12 +117,24 @@ workflows:
           fi
           
           echo ""
+          echo "=== Copying APK files to root for artifacts ==="
+          if find . -name "*.apk" -type f 2>/dev/null | head -1; then
+            find . -name "*.apk" -type f -exec cp {} . \;
+            echo "APK files copied to root directory"
+            ls -la *.apk 2>/dev/null || echo "No APK files in root"
+          else
+            echo "No APK files found to copy"
+          fi
+          
+          echo ""
           echo "=== Build completed successfully ==="
           
     artifacts:
       - app/build/outputs/**/*.apk
       - app/build/outputs/**/*.aab
       - app/build/outputs/**/mapping.txt
+      - "**/*.apk"
+      - "build/**/*.apk"
       
     publishing:
       # فقط ارسال ایمیل با فایل APK
