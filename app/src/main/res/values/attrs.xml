@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom color attributes -->
+    <attr name="colorBackground" format="color" />
+    <attr name="materialButtonTextStyle" format="reference" />
+    <attr name="contentInsetLeftWithNavigation" format="dimension" />
+    
+    <!-- Chat bubble attributes -->
+    <attr name="chat_bubble_user" format="color" />
+    <attr name="chat_bubble_ai" format="color" />
+    <attr name="chat_text_user" format="color" />
+    <attr name="chat_text_ai" format="color" />
+    <attr name="chat_time_user" format="color" />
+    <attr name="chat_time_ai" format="color" />
+</resources>
