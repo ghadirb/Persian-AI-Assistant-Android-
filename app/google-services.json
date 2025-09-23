@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "906587094678",
+    "project_id": "persian-ai-assistant-android",
+    "storage_bucket": "persian-ai-assistant-android.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906587094678:android:326ab5332276e88184ccb7",
+        "android_client_info": {
+          "package_name": "com.example.persianaiapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCf7cDkDBNW_qjXMdkKH_w-HkpttSmygI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
