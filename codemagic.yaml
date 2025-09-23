@@ -1,0 +1,204 @@
+workflows:
+  simple-apk:
+    name: Simple APK Build
+    max_build_duration: 20
+    instance_type: mac_mini_m1
+    environment:
+      java: 17
+    scripts:
+      - name: Build APK
+        script: |
+          chmod +x ./build-apk.sh
+          ./build-apk.sh
+    artifacts:
+      - "*.apk"
+    
+  android-workflow:
+    name: Persian AI Assistant Android Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      # android_signing:
+      #   - keystore_reference
+      groups:
+        - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
+      vars:
+        PACKAGE_NAME: "com.example.persianaiapp"
+        GOOGLE_PLAY_TRACK: "internal" # Any default or custom track
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+      java: 17
+      node: 18
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.android/build-cache
+    triggering:
+      events:
+        - push
+        - tag
+        - pull_request
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+          source: true
+        - pattern: 'develop'
+          include: true
+          source: true
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+      
+      - name: Get Flutter packages
+        script: |
+          # اگر از Flutter استفاده می‌کنید این بخش را فعال کنید
+          # flutter packages pub get
+          
+      - name: Set up keystore
+        script: |
+          # Only set up keystore if CM_KEYSTORE is available
+          if [ ! -z "$CM_KEYSTORE" ]; then
+            echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
+            export KEYSTORE_PATH="/tmp/keystore.keystore"
+            echo "Keystore configured for signing"
+          else
+            echo "No keystore configured - building unsigned APK"
+          fi
+          
+      - name: Generate debug keystore
+        script: |
+          # Generate debug keystore if it doesn't exist
+          if [ ! -f "app/debug.keystore" ]; then
+            echo "Generating debug keystore..."
+            keytool -genkeypair -v \
+              -keystore app/debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -dname "CN=Android Debug,O=Android,C=US" \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000
+            echo "Debug keystore generated successfully"
+          else
+            echo "Debug keystore already exists"
+          fi
+          
+      - name: Build and Verify APK Generation
+        script: |
+          echo "=== Starting Persian AI Assistant Build ==="
+          echo "Java version: $(java -version 2>&1 | head -n 1)"
+          
+          # Make gradlew executable
+          chmod +x ./gradlew
+          echo "Made gradlew executable"
+          
+          echo "Gradle version: $(./gradlew --version | grep Gradle)"
+          
+          # Clean project
+          echo "=== Cleaning project ==="
+          ./gradlew clean --no-daemon --stacktrace
+          
+          # Build Debug APK
+          echo "=== Building Debug APK ==="
+          ./gradlew assembleDebug --no-daemon --stacktrace --info
+          
+          # Build Release APK if keystore available
+          echo "=== Building Release APK (if keystore available) ==="
+          if [ ! -z "$CM_KEYSTORE" ]; then
+            ./gradlew assembleRelease --no-daemon --stacktrace --info
+            ./gradlew bundleRelease --no-daemon --stacktrace --info
+          else
+            echo "No keystore - skipping release build"
+          fi
+          
+          echo ""
+          echo "=== Verifying build outputs ==="
+          echo "Build directory contents:"
+          ls -la app/build/ || echo "No build directory"
+          
+          echo "Searching for APK files:"
+          APK_FILES=$(find . -name "*.apk" -type f 2>/dev/null)
+          if [ -n "$APK_FILES" ]; then
+            echo "Found APK files:"
+            echo "$APK_FILES"
+            echo "APK file sizes:"
+            find . -name "*.apk" -type f -exec ls -lh {} \;
+          else
+            echo "❌ No APK files found anywhere!"
+            echo "Checking gradle tasks..."
+            ./gradlew tasks --all | grep -i apk || echo "No APK tasks found"
+            exit 1
+          fi
+          
+          # Create artifacts directory and copy files
+          echo "=== Preparing artifacts ==="
+          mkdir -p artifacts
+          find . -name "*.apk" -type f -exec cp {} artifacts/ \;
+          find . -name "*.aab" -type f -exec cp {} artifacts/ \;
+          
+          echo "Artifacts directory contents:"
+          ls -la artifacts/
+          
+          echo "=== Build completed successfully ==="
+          
+    artifacts:
+      - "*.apk"
+      - "artifacts/*.apk"
+      - "artifacts/*.aab"
+      - "app/build/outputs/**/*.apk"
+      - "app/build/outputs/**/*.aab"
+      
+    publishing:
+      # فقط ارسال ایمیل با فایل APK
+      email:
+        recipients:
+          - ghadir.baraty@gmail.com  # ایمیل اصلی شما
+        notify:
+          success: true
+          failure: true
+          
+  # Workflow برای ساخت APK بدون امضا (برای تست)
+  android-unsigned:
+    name: Persian AI Assistant - Unsigned APK
+    max_build_duration: 30
+    instance_type: mac_mini_m1
+    environment:
+      java: 17
+      node: 18
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.android/build-cache
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'develop'
+          include: true
+          source: true
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+          
+      - name: Build unsigned APK
+        script: |
+          chmod +x ./gradle-build.sh
+          ./gradle-build.sh
+          
+      - name: Rename APK
+        script: |
+          cd app/build/outputs/apk/debug
+          mv app-debug.apk persian-ai-assistant-unsigned-$(date +%Y%m%d-%H%M%S).apk
+          
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
+      
+    publishing:
+      email:
+        recipients:
+          - ghadir.baraty@gmail.com
+        notify:
+          success: true
+          failure: true
