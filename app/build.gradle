@@ -72,6 +72,20 @@ android {
             excludes += '/META-INF/gradle/incremental.annotation.processors'
         }
     }
+
+    sourceSets {
+        main {
+            java {
+                exclude 'com/example/persianaiapp/ui/memories/**'
+                exclude 'com/example/persianaiapp/ui/models/**'
+                exclude 'com/example/persianaiapp/ui/offline/**'
+                exclude 'com/example/persianaiapp/ui/online/**'
+                exclude 'com/example/persianaiapp/ui/settings/**'
+                exclude 'com/example/persianaiapp/ui/startup/**'
+                exclude 'com/example/persianaiapp/ui/welcome/**'
+            }
+        }
+    }
 }
 
 
