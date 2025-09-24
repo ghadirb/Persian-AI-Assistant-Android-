@@ -1,82 +1,40 @@
 workflows:
-  minimal-build:
-    name: Minimal Persian AI Assistant Build
-    max_build_duration: 20
-    instance_type: mac_mini_m1
-    environment:
-      java: 17
-    scripts:
-      - name: Minimal build
-        script: |
-          echo "=== Minimal Build for Persian AI Assistant ==="
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
-          chmod +x ./gradlew
-          ./gradlew clean --no-daemon
-          ./gradlew assembleDebug --no-daemon
-          
-          if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
-            cp app/build/outputs/apk/debug/app-debug.apk persian-ai-minimal.apk
-            echo "SUCCESS: APK created"
-            ls -lh persian-ai-minimal.apk
-          else
-            echo "ERROR: APK not found"
-            find . -name "*.apk" -type f
-            exit 1
-          fi
-    artifacts:
-      - "persian-ai-minimal.apk"
-    publishing:
-      email:
-        recipients:
-          - ghadir.baraty@gmail.com
-        notify:
-          success: true
-          failure: true
-  debug-only:
-    name: Persian AI Assistant - Debug APK Only
-    max_build_duration: 25
+  clean-build:
+    name: Clean Persian AI Assistant Build
+    max_build_duration: 40
     instance_type: mac_mini_m1
     environment:
       java: 17
       vars:
         GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Xmx4g"
     scripts:
-      - name: Setup environment
+      - name: Setup
         script: |
-          echo "=== Setting up build environment ==="
+          echo "=== Clean Build for Persian AI Assistant ==="
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
-          echo "Java version: $(java -version 2>&1 | head -n 1)"
+          echo "Java: $(java -version 2>&1 | head -n 1)"
           echo "Android SDK: $ANDROID_SDK_ROOT"
           
-      - name: Build debug APK
+      - name: Build Debug APK
         script: |
-          echo "=== Building Persian AI Assistant Debug APK ==="
+          echo "=== Building Debug APK ==="
           chmod +x ./gradlew
-          
-          echo "Gradle version:"
-          ./gradlew --version
-          
-          echo "=== Cleaning project ==="
           ./gradlew clean --no-daemon --stacktrace
-          
-          echo "=== Building debug APK ==="
           ./gradlew assembleDebug --no-daemon --stacktrace
           
-          echo "=== Verifying APK creation ==="
-          find . -name "*.apk" -type f -ls
-          
+          echo "=== Verifying APK ==="
           if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
             echo "✅ APK created successfully!"
-            ls -lh app/build/outputs/apk/debug/app-debug.apk
-            cp app/build/outputs/apk/debug/app-debug.apk persian-ai-assistant-debug.apk
+            cp app/build/outputs/apk/debug/app-debug.apk persian-ai-clean.apk
+            ls -lh persian-ai-clean.apk
           else
-            echo "❌ APK not found in expected location"
+            echo "❌ APK not found!"
             find . -name "*.apk" -type f
             exit 1
           fi
           
     artifacts:
-      - "persian-ai-assistant-debug.apk"
+      - "persian-ai-clean.apk"
       - "app/build/outputs/apk/debug/*.apk"
       
     publishing:
@@ -86,6 +44,7 @@ workflows:
         notify:
           success: true
           failure: true
+
   simple-apk:
     name: Simple APK Build
     max_build_duration: 30
@@ -119,152 +78,58 @@ workflows:
       - "*.apk"
       - "artifacts/*.apk"
       - "app/build/outputs/apk/debug/*.apk"
-    
-  android-workflow:
-    name: Persian AI Assistant Android Build
-    max_build_duration: 60
+
+  no-signing-build:
+    name: Persian AI Assistant - No Signing Required
+    max_build_duration: 45
     instance_type: mac_mini_m1
     environment:
-      # android_signing:
-      #   - keystore_reference
-      # groups:
-      #   - google_play # فعلاً غیرفعال - نیاز به تنظیم Google Play Console
+      java: 17
       vars:
         PACKAGE_NAME: "com.example.persianaiapp"
-        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
-      java: 17
-      node: 18
-    cache:
-      cache_paths:
-        - ~/.gradle/caches
-        - ~/.android/build-cache
-    triggering:
-      events:
-        - push
-        - tag
-        - pull_request
-      branch_patterns:
-        - pattern: 'main'
-          include: true
-          source: true
-        - pattern: 'develop'
-          include: true
-          source: true
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Xmx4g"
     scripts:
-      - name: Set up local.properties
+      - name: Setup environment
         script: |
+          echo "=== No-Signing Build for Persian AI Assistant ==="
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
-      
-      - name: Get Flutter packages
-        script: |
-          # اگر از Flutter استفاده می‌کنید این بخش را فعال کنید
-          # flutter packages pub get
+          echo "Java: $(java -version 2>&1 | head -n 1)"
+          echo "Android SDK: $ANDROID_SDK_ROOT"
           
-      - name: Set up keystore
+      - name: Build Debug APK Only
         script: |
-          # Only set up keystore if CM_KEYSTORE is available
-          if [ ! -z "$CM_KEYSTORE" ]; then
-            echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
-            export KEYSTORE_PATH="/tmp/keystore.keystore"
-            echo "Keystore configured for signing"
-          else
-            echo "No keystore configured - building unsigned APK"
-          fi
-          
-      - name: Generate debug keystore
-        script: |
-          # Generate debug keystore if it doesn't exist
-          if [ ! -f "app/debug.keystore" ]; then
-            echo "Generating debug keystore..."
-            keytool -genkeypair -v \
-              -keystore app/debug.keystore \
-              -storepass android \
-              -alias androiddebugkey \
-              -keypass android \
-              -dname "CN=Android Debug,O=Android,C=US" \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000
-            echo "Debug keystore generated successfully"
-          else
-            echo "Debug keystore already exists"
-          fi
-          
-      - name: Build and Verify APK Generation
-        script: |
-          echo "=== Starting Persian AI Assistant Build ==="
-          echo "Java version: $(java -version 2>&1 | head -n 1)"
-          
-          # Make gradlew executable
+          echo "=== Building Debug APK (No Signing) ==="
           chmod +x ./gradlew
-          echo "Made gradlew executable"
           
-          echo "Gradle version: $(./gradlew --version | grep Gradle)"
-          
-          # Clean project
           echo "=== Cleaning project ==="
           ./gradlew clean --no-daemon --stacktrace
           
-          # Build Debug APK
           echo "=== Building Debug APK ==="
-          ./gradlew assembleDebug --no-daemon --stacktrace --info
+          ./gradlew assembleDebug --no-daemon --stacktrace
           
-          # Build Release APK if keystore available
-          echo "=== Building Release APK (if keystore available) ==="
-          if [ ! -z "$CM_KEYSTORE" ]; then
-            ./gradlew assembleRelease --no-daemon --stacktrace --info
-            ./gradlew bundleRelease --no-daemon --stacktrace --info
+          echo "=== Verifying APK creation ==="
+          if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+            echo "✅ Debug APK created successfully!"
+            cp app/build/outputs/apk/debug/app-debug.apk persian-ai-no-signing.apk
+            ls -lh persian-ai-no-signing.apk
           else
-            echo "No keystore - skipping release build"
-          fi
-          
-          echo ""
-          echo "=== Verifying build outputs ==="
-          echo "Build directory contents:"
-          ls -la app/build/ || echo "No build directory"
-          
-          echo "Searching for APK files:"
-          APK_FILES=$(find . -name "*.apk" -type f 2>/dev/null)
-          if [ -n "$APK_FILES" ]; then
-            echo "Found APK files:"
-            echo "$APK_FILES"
-            echo "APK file sizes:"
-            find . -name "*.apk" -type f -exec ls -lh {} \;
-          else
-            echo "❌ No APK files found anywhere!"
-            echo "Checking gradle tasks..."
-            ./gradlew tasks --all | grep -i apk || echo "No APK tasks found"
+            echo "❌ APK not found!"
+            find . -name "*.apk" -type f
             exit 1
           fi
           
-          # Create artifacts directory and copy files
-          echo "=== Preparing artifacts ==="
-          mkdir -p artifacts
-          find . -name "*.apk" -type f -exec cp {} artifacts/ \;
-          find . -name "*.aab" -type f -exec cp {} artifacts/ \;
-          
-          echo "Artifacts directory contents:"
-          ls -la artifacts/
-          
-          echo "=== Build completed successfully ==="
-          
     artifacts:
-      - "*.apk"
-      - "artifacts/*.apk"
-      - "artifacts/*.aab"
-      - "app/build/outputs/**/*.apk"
-      - "app/build/outputs/**/*.aab"
+      - "persian-ai-no-signing.apk"
+      - "app/build/outputs/apk/debug/*.apk"
       
     publishing:
-      # فقط ارسال ایمیل با فایل APK
       email:
         recipients:
-          - ghadir.baraty@gmail.com  # ایمیل اصلی شما
+          - ghadir.baraty@gmail.com
         notify:
           success: true
           failure: true
-          
-  # Workflow برای ساخت APK بدون امضا (برای تست)
+
   android-unsigned:
     name: Persian AI Assistant - Unsigned APK
     max_build_duration: 30
@@ -272,17 +137,6 @@ workflows:
     environment:
       java: 17
       node: 18
-    cache:
-      cache_paths:
-        - ~/.gradle/caches
-        - ~/.android/build-cache
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: 'develop'
-          include: true
-          source: true
     scripts:
       - name: Set up local.properties
         script: |
