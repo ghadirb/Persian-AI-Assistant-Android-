@@ -1,0 +1,152 @@
+name: Persian AI Assistant - Fixed Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build Type'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+        - debug
+        - release
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4 -Dorg.gradle.parallel=true"
+  JAVA_OPTS: "-Xmx4g -Xms1g"
+
+jobs:
+  build:
+    name: Build Persian AI Assistant
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
+
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 34
+        build-tools-version: '34.0.0'
+        ndk-version: '25.1.8937393'
+        cmake-version: '3.22.1'
+
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+
+    - name: Create schemas directory
+      run: mkdir -p app/schemas
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+          ~/.gradle/build-cache
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Validate Gradle Wrapper
+      uses: gradle/wrapper-validation-action@v1
+
+    - name: Clean Project
+      run: ./gradlew clean --stacktrace
+
+    - name: Build Debug APK
+      if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == '' || github.event_name != 'workflow_dispatch'
+      run: ./gradlew assembleDebug --stacktrace --info --no-daemon
+      env:
+        ORG_GRADLE_PROJECT_androidxComposeCompiler_reportUndefined: false
+        ORG_GRADLE_PROJECT_androidxComposeCompiler_suppressKotlinVersionCompatibilityCheck: true
+
+    - name: Build Release APK
+      if: github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/')
+      run: ./gradlew assembleRelease --stacktrace --info --no-daemon
+      env:
+        ORG_GRADLE_PROJECT_androidxComposeCompiler_reportUndefined: false
+        ORG_GRADLE_PROJECT_androidxComposeCompiler_suppressKotlinVersionCompatibilityCheck: true
+
+    - name: Build AAB
+      if: github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/')
+      run: ./gradlew bundleRelease --stacktrace --info --no-daemon
+      continue-on-error: true
+
+    - name: List Build Outputs
+      run: |
+        echo "=== Build Outputs ==="
+        find app/build/outputs -type f -name "*.apk" -o -name "*.aab" 2>/dev/null || echo "No build outputs found"
+        echo "=== APK Details ==="
+        find app/build/outputs -name "*.apk" -exec ls -lh {} \; 2>/dev/null || echo "No APK files"
+        echo "=== AAB Details ==="
+        find app/build/outputs -name "*.aab" -exec ls -lh {} \; 2>/dev/null || echo "No AAB files"
+
+    - name: Upload Debug APK
+      if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == '' || github.event_name != 'workflow_dispatch'
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-assistant-debug-${{ github.run_number }}
+        path: app/build/outputs/apk/debug/*.apk
+        retention-days: 30
+        if-no-files-found: error
+
+    - name: Upload Release APK
+      if: github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-assistant-release-${{ github.run_number }}
+        path: app/build/outputs/apk/release/*.apk
+        retention-days: 90
+        if-no-files-found: error
+
+    - name: Upload AAB
+      if: github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-assistant-bundle-${{ github.run_number }}
+        path: app/build/outputs/bundle/release/*.aab
+        retention-days: 90
+        if-no-files-found: warn
+
+    - name: Build Summary
+      if: always()
+      run: |
+        echo "## 📱 Persian AI Assistant Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Build Type | ${{ github.event.inputs.build_type || 'debug' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Trigger | ${{ github.event_name }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Status | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+          echo "✅ **Debug APK:** Created successfully" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
+          echo "✅ **Release APK:** Created successfully" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ -f "app/build/outputs/bundle/release/app-release.aab" ]; then
+          echo "✅ **AAB:** Created successfully" >> $GITHUB_STEP_SUMMARY
+        fi

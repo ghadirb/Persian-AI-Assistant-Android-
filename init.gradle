@@ -1,0 +1,57 @@
+// Gradle initialization script for Iranian users
+// This script helps resolve dependency download issues in Iran
+
+// Force disable all proxy settings
+System.setProperty("java.net.useSystemProxies", "false")
+System.setProperty("http.proxyHost", "")
+System.setProperty("http.proxyPort", "")
+System.setProperty("https.proxyHost", "")
+System.setProperty("https.proxyPort", "")
+
+allprojects {
+    repositories {
+        // Add Iranian mirrors first for faster access
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
+            content {
+                includeGroupByRegex "com\\.android.*"
+                includeGroupByRegex "com\\.google.*"
+                includeGroupByRegex "androidx.*"
+            }
+        }
+        
+        maven {
+            url 'https://maven.aliyun.com/repository/central'
+            content {
+                includeGroupByRegex "org\\.jetbrains.*"
+                includeGroupByRegex "org\\.kotlin.*"
+                includeGroup "dagger"
+                includeGroup "javax.inject"
+            }
+        }
+        
+        maven {
+            url 'https://maven.aliyun.com/repository/gradle-plugin'
+        }
+        
+        // Original repositories as fallback
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        gradlePluginPortal()
+    }
+}
+
+// Configure HTTP settings for better connectivity
+gradle.projectsLoaded {
+    allprojects {
+        afterEvaluate { project ->
+            if (project.hasProperty('android')) {
+                android {
+                    // Remove problematic useLibrary
+                    compileSdkVersion 34
+                }
+            }
+        }
+    }
+}

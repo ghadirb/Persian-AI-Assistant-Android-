@@ -1,0 +1,77 @@
+workflows:
+  android-workflow:
+    name: Android Workflow
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      android_signing:
+        - keystore_reference
+      groups:
+        - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS)
+      vars:
+        PACKAGE_NAME: "com.example.persianaissistant"
+        GOOGLE_PLAY_TRACK: "internal"
+      java: 17
+      node: 16
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+      - name: Get Flutter packages
+        script: |
+          cd . && ls -la
+      - name: Build Android APK
+        script: |
+          ./gradlew assembleRelease --no-daemon --stacktrace
+    artifacts:
+      - app/build/outputs/**/*.apk
+      - app/build/outputs/**/*.aab
+      - app/build/outputs/**/mapping.txt
+    publishing:
+      email:
+        recipients:
+          - ghadir.baraty@gmail.com
+        notify:
+          success: true
+          failure: true
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: $GOOGLE_PLAY_TRACK
+        submit_as_draft: true
+
+  simple-apk:
+    name: Simple APK Build
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      java: 17
+      vars:
+        GRADLE_OPTS: "-Xmx4g -Dorg.gradle.daemon=false"
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+      - name: Make gradlew executable
+        script: |
+          chmod +x ./gradlew
+      - name: Clean project
+        script: |
+          ./gradlew clean --no-daemon --stacktrace
+      - name: Build debug APK
+        script: |
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Build release APK
+        script: |
+          ./gradlew assembleRelease --no-daemon --stacktrace
+    artifacts:
+      - app/build/outputs/**/*.apk
+      - app/build/outputs/**/*.aab
+      - app/build/outputs/**/mapping.txt
+      - build/reports/**/*
+    publishing:
+      email:
+        recipients:
+          - ghadir.baraty@gmail.com
+        notify:
+          success: true
+          failure: true

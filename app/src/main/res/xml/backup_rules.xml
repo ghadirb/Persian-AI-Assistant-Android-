@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Include user data and preferences -->
+    <include domain="sharedpref" path="."/>
+    <include domain="database" path="."/>
+    <include domain="file" path="conversations/"/>
+    <include domain="file" path="models/"/>
+    <include domain="file" path="backups/"/>
+    
+    <!-- Exclude sensitive and temporary data -->
+    <exclude domain="sharedpref" path="secure_prefs.xml"/>
+    <exclude domain="database" path="secure_database.db"/>
+</full-backup-content>

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">دستیار هوش مصنوعی فارسی</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">خانه</string>
+    <string name="nav_chat">چت</string>
+    <string name="nav_memories">خاطرات</string>
+    <string name="nav_settings">تنظیمات</string>
+    
+    <!-- Notification Channels -->
+    <string name="channel_voice_input_name">ورودی صوتی</string>
+    <string name="channel_voice_input_description">اطلاعات مربوط به ضبط صدا و تشخیص گفتار</string>
+    <string name="channel_ai_response_name">پاسخ هوش مصنوعی</string>
+    <string name="channel_ai_response_description">اطلاعات مربوط به پاسخ‌های هوش مصنوعی</string>
+    <string name="channel_background_processing_name">پردازش پس‌زمینه</string>
+    <string name="channel_background_processing_description">اطلاعات مربوط به پردازش‌های پس‌زمینه</string>
+    <string name="channel_reminders_name">یادآورها</string>
+    <string name="channel_reminders_description">اطلاعات مربوط به یادآورها و وظایف</string>
+    
+    <!-- Main Screen -->
+    <string name="welcome_message">به دستیار هوشمند فارسی خوش آمدید</string>
+    <string name="tap_to_speak">برای صحبت ضربه بزنید</string>
+    <string name="listening">در حال گوش دادن…</string>
+    <string name="processing">در حال پردازش…</string>
+    <string name="send">ارسال</string>
+    <string name="cancel">انصراف</string>
+    
+    <!-- Modes -->
+    <string name="online_mode">حالت آنلاین</string>
+    <string name="offline_mode">حالت آفلاین</string>
+    <string name="switch_to_online">تغییر به حالت آنلاین</string>
+    <string name="switch_to_offline">تغییر به حالت آفلاین</string>
+    
+    <!-- Settings -->
+    <string name="settings">تنظیمات</string>
+    <string name="language">زبان</string>
+    <string name="voice">صدا</string>
+    <string name="notifications">اعلان‌ها</string>
+    <string name="privacy">حریم خصوصی</string>
+    <string name="about">درباره برنامه</string>
+    <string name="select_model">انتخاب مدل</string>
+    <string name="backup_settings">تنظیمات پشتیبان‌گیری</string>
+    
+    <!-- Memory -->
+    <string name="memories">خاطرات</string>
+    <string name="add_memory">افزودن خاطره جدید</string>
+    <string name="memory_details">جزئیات خاطره</string>
+    <string name="memory_title">عنوان</string>
+    <string name="memory_content">متن خاطره</string>
+    <string name="save">ذخیره</string>
+    <string name="delete">حذف</string>
+    <string name="title">عنوان</string>
+    <string name="content">محتوا</string>
+    <string name="tags">برچسب‌ها</string>
+    <string name="tap_to_remove">برای حذف ضربه بزنید</string>
+    <string name="add_tags">افزودن برچسب</string>
+    <string name="add_tag">افزودن برچسب</string>
+    <string name="pin">سنجاق کردن</string>
+    <string name="voice_input">ورودی صوتی</string>
+    <string name="mode">حالت</string>
+    <string name="quick_actions">اقدامات سریع</string>
+    <string name="recent_memories">خاطرات اخیر</string>
+    <string name="quick_tips">نکات سریع</string>
+    <string name="tip_voice_command">برای شروع گفتگو، دکمه میکروفون را فشار دهید</string>
+    <string name="tip_offline_mode">حالت آفلاین برای استفاده بدون اینترنت</string>
+    <string name="copy">کپی</string>
+    <string name="error">خطا</string>
+    <string name="memory_details">جزئیات خاطره</string>
+    
+    <!-- Permissions -->
+    <string name="permission_microphone_title">دسترسی به میکروفون</string>
+    <string name="permission_microphone_message">برای تشخیص صدا به دسترسی به میکروفون نیاز داریم</string>
+    <string name="permission_storage_title">دسترسی به حافظه</string>
+    <string name="permission_storage_message">برای ذخیره مدل‌های آفلاین به دسترسی به حافظه نیاز داریم</string>
+    
+    <!-- Errors -->
+    <string name="error_network">اتصال اینترنت برقرار نیست</string>
+    <string name="error_voice_input">خطا در تشخیص صدا</string>
+    <string name="error_processing">خطا در پردازش درخواست</string>
+    <string name="try_again">تلاش مجدد</string>
+    
+    <!-- Success Messages -->
+    <string name="success_save">با موفقیت ذخیره شد</string>
+    <string name="success_delete">با موفقیت حذف شد</string>
+    
+    <!-- Model Management -->
+    <string name="download_models">دانلود مدل‌های آفلاین</string>
+    <string name="model_downloading">در حال دانلود مدل: %1$s</string>
+    <string name="model_download_complete">دانلود مدل کامل شد</string>
+    <string name="model_download_failed">خطا در دانلود مدل</string>
+    <string name="select_model">انتخاب مدل</string>
+    
+    <!-- Google Drive -->
+    <string name="connect_google_drive">اتصال به Google Drive</string>
+    <string name="backup_settings">تنظیمات پشتیبان‌گیری</string>
+    <string name="backup_now">پشتیبان‌گیری اکنون</string>
+    <string name="restore_backup">بازیابی پشتیبان</string>
+    
+    <!-- Version -->
+    <string name="version">نسخه %1$s</string>
+    
+    <!-- Welcome Screen -->
+    <string name="welcome_subtitle">دستیار هوشمند شما برای کارهای روزمره</string>
+    <string name="welcome_description_title">درباره این برنامه</string>
+    <string name="welcome_description">این برنامه یک دستیار هوش مصنوعی پیشرفته است که هم به صورت آنلاین و هم آفلاین کار می‌کند. شما می‌توانید با آن صحبت کنید، سوالات بپرسید و از قابلیت‌های پیشرفته آن استفاده کنید.</string>
+    <string name="select_mode">انتخاب حالت کاری</string>
+    <string name="online_mode_description">استفاده از مدل‌های قدرتمند آنلاین با کیفیت بالا</string>
+    <string name="offline_mode_description">استفاده از مدل‌های محلی بدون نیاز به اینترنت</string>
+    <string name="recommended">پیشنهادی</string>
+    <string name="key_features">ویژگی‌های کلیدی</string>
+    <string name="feature_privacy">حریم خصوصی</string>
+    <string name="feature_privacy_desc">اطلاعات شما محفوظ و امن نگهداری می‌شود</string>
+    <string name="feature_offline">کار آفلاین</string>
+    <string name="feature_offline_desc">بدون نیاز به اینترنت قابل استفاده</string>
+    <string name="feature_persian">پشتیبانی فارسی</string>
+    <string name="feature_persian_desc">بهینه‌سازی شده برای زبان فارسی</string>
+    
+    <!-- Online Mode -->
+    <string name="online_mode_title">حالت آنلاین</string>
+    <string name="online_mode_subtitle">اتصال به سرویس‌های هوش مصنوعی</string>
+    <string name="enter_access_password">رمز عبور دسترسی را وارد کنید</string>
+    <string name="password">رمز عبور</string>
+    <string name="password_hint">رمز عبور شما</string>
+    <string name="hide_password">مخفی کردن رمز</string>
+    <string name="show_password">نمایش رمز</string>
+    <string name="connect_online">اتصال آنلاین</string>
+    <string name="back">بازگشت</string>
+    <string name="connection_status">وضعیت اتصال</string>
+    <string name="connected_successfully">با موفقیت متصل شد</string>
+    <string name="active_model">مدل فعال: %1$s</string>
+    <string name="start_chat">شروع چت</string>
+    <string name="refresh">بروزرسانی</string>
+    <string name="online_mode_info_title">اطلاعات حالت آنلاین</string>
+    <string name="online_mode_info">در این حالت از مدل‌های قدرتمند آنلاین استفاده می‌شود. کیفیت پاسخ‌ها بالاتر است اما نیاز به اینترنت دارد.</string>
+    
+    <!-- Offline Mode -->
+    <string name="offline_mode_title">حالت آفلاین</string>
+    <string name="offline_mode_subtitle">استفاده از مدل‌های محلی</string>
+    <string name="model_status">وضعیت مدل</string>
+    <string name="model_ready">مدل آماده است</string>
+    <string name="no_model_available">هیچ مدلی در دسترس نیست</string>
+    <string name="custom_model_path">مسیر مدل سفارشی</string>
+    <string name="model_file_path">مسیر فایل مدل</string>
+    <string name="model_path_hint">/storage/emulated/0/model.gguf</string>
+    <string name="browse_files">مرور فایل‌ها</string>
+    <string name="use_custom_model">استفاده از مدل سفارشی</string>
+    <string name="offline_mode_info_title">اطلاعات حالت آفلاین</string>
+    <string name="offline_mode_info">در این حالت از مدل‌های محلی استفاده می‌شود. نیازی به اینترنت ندارد اما سرعت کمتری دارد.</string>
+    
+    <!-- Chat Screen -->
+    <string name="ai_assistant">دستیار هوشمند</string>
+    <string name="send_message">ارسال پیام</string>
+    <string name="record_voice">ضبط صدا</string>
+    <string name="stop_playback">توقف پخش</string>
+    <string name="play_voice">پخش صدا</string>
+    <string name="stop_recording">توقف ضبط</string>
+    <string name="cancel_recording">لغو ضبط</string>
+    
+    <!-- Voice Messages -->
+    <string name="voice_message">پیام صوتی</string>
+    <string name="recording_duration">مدت ضبط: %1$s</string>
+    
+    <!-- Background Services -->
+    <string name="ai_service_running">دستیار هوشمند در حال اجرا</string>
+    <string name="voice_service_running">سرویس صوتی فعال</string>
+    
+    <!-- Backup & Restore -->
+    <string name="backup_restore">پشتیبان‌گیری و بازیابی</string>
+    <string name="create_backup">ایجاد پشتیبان</string>
+    <string name="restore_from_backup">بازیابی از پشتیبان</string>
+    <string name="backup_created">پشتیبان ایجاد شد</string>
+    <string name="backup_restored">پشتیبان بازیابی شد</string>
+    <string name="auto_backup">پشتیبان‌گیری خودکار</string>
+    
+    <!-- Model Management Extended -->
+    <string name="model_manager">مدیریت مدل‌ها</string>
+    <string name="import_model">وارد کردن مدل</string>
+    <string name="model_imported">مدل وارد شد</string>
+    <string name="model_deleted">مدل حذف شد</string>
+    <string name="model_size">حجم: %1$.1f GB</string>
+    
+    <!-- Security -->
+    <string name="security">امنیت</string>
+    <string name="biometric_auth">احراز هویت بیومتریک</string>
+    <string name="password_protection">محافظت با رمز</string>
+    <string name="set_password">تنظیم رمز عبور</string>
+    <string name="confirm_password">تأیید رمز عبور</string>
+    <string name="password_mismatch">رمزهای عبور مطابقت ندارند</string>
+    
+    <!-- App Integration -->
+    <string name="app_integration">یکپارچگی با برنامه‌ها</string>
+    <string name="calendar_integration">تقویم</string>
+    <string name="maps_integration">نقشه</string>
+    <string name="contacts_integration">مخاطبین</string>
+    <string name="sms_integration">پیامک</string>
+    
+    <!-- Accessibility -->
+    <string name="accessibility">دسترسی‌پذیری</string>
+    <string name="font_size">اندازه فونت</string>
+    <string name="high_contrast">کنتراست بالا</string>
+    <string name="voice_feedback">بازخورد صوتی</string>
+    
+    <!-- Advanced Settings -->
+    <string name="advanced_settings">تنظیمات پیشرفته</string>
+    <string name="developer_options">گزینه‌های توسعه‌دهنده</string>
+    <string name="debug_mode">حالت اشکال‌زدایی</string>
+    <string name="clear_cache">پاک کردن حافظه موقت</string>
+    <string name="reset_app">بازنشانی برنامه</string>
+    
+    <!-- Settings Screen -->
+    <string name="general_settings">تنظیمات عمومی</string>
+    <string name="voice_settings">تنظیمات صوتی</string>
+    <string name="theme">تم</string>
+    <string name="voice_activation_desc">فعال‌سازی دستیار با صدا</string>
+    <string name="voice_feedback_desc">پاسخ صوتی دستیار</string>
+    <string name="biometric_auth_desc">استفاده از اثر انگشت یا تشخیص چهره</string>
+    <string name="password_set">رمز عبور تنظیم شده</string>
+    <string name="no_password">بدون رمز عبور</string>
+    <string name="auto_backup_desc">پشتیبان‌گیری خودکار روزانه</string>
+    <string name="create_backup_desc">ایجاد پشتیبان دستی</string>
+    <string name="restore_backup_desc">بازیابی از پشتیبان قبلی</string>
+    <string name="models_installed">مدل نصب شده</string>
+    <string name="auto_model_updates">بروزرسانی خودکار مدل‌ها</string>
+    <string name="auto_model_updates_desc">دانلود خودکار نسخه‌های جدید</string>
+    <string name="privacy_policy">حریم خصوصی</string>
+    <string name="privacy_policy_desc">قوانین و مقررات حریم خصوصی</string>
+    
+    <!-- Biometric Authentication -->
+    <string name="biometric_auth_title">احراز هویت بیومتریک</string>
+    <string name="biometric_auth_subtitle">برای دسترسی به برنامه احراز هویت کنید</string>
+    <string name="biometric_auth_failed">احراز هویت ناموفق</string>
+    
+    <!-- Notification Channels -->
+    <string name="channel_voice_service_name">سرویس صوتی</string>
+    <string name="channel_voice_service_description">اعلان‌های مربوط به سرویس صوتی</string>
+    
+    <!-- Dialog Components -->
+    <string name="language_selection">انتخاب زبان</string>
+    <string name="theme_selection">انتخاب تم</string>
+    <string name="light_theme">روشن</string>
+    <string name="dark_theme">تیره</string>
+    <string name="system_theme">سیستم</string>
+    
+    <!-- File Operations -->
+    <string name="file_picker_title">انتخاب فایل</string>
+    <string name="file_not_found">فایل پیدا نشد</string>
+    <string name="file_invalid">فایل نامعتبر</string>
+    <string name="file_too_large">فایل بیش از حد بزرگ است</string>
+    
+    <!-- Additional Dialog Strings -->
+    <string name="change_password">تغییر رمز عبور</string>
+    <string name="remove_password">حذف رمز عبور</string>
+    <string name="ok">تأیید</string>
+    
+    <!-- Notification Channels -->
+    <string name="channel_ai_responses_name">پاسخ‌های هوش مصنوعی</string>
+    <string name="channel_ai_responses_description">اعلان‌های مربوط به پاسخ‌های دستیار هوشمند</string>
+    
+    <!-- Notification Messages -->
+    <string name="ai_response">پاسخ دستیار هوشمند</string>
+    <string name="voice_activation_active">فعال‌سازی صوتی فعال</string>
+    <string name="voice_activation_listening">در حال گوش دادن...</string>
+    <string name="backup_completed">پشتیبان‌گیری تکمیل شد</string>
+    <string name="backup_completed_message">پشتیبان‌گیری %1$s با موفقیت انجام شد</string>
+    <string name="model_updated">مدل بروزرسانی شد</string>
+    <string name="model_updated_message">مدل %1$s به آخرین نسخه بروزرسانی شد</string>
+    
+    <!-- Additional Icons -->
+    <string name="ic_notification">اعلان</string>
+    <string name="ic_backup">پشتیبان</string>
+    <string name="ic_download">دانلود</string>
+    
+    <!-- Status Indicators -->
+    <string name="api_keys_status">وضعیت کلیدهای API</string>
+    <string name="checking_keys">در حال بررسی کلیدها...</string>
+    <string name="keys_valid">کلیدها معتبر هستند</string>
+    <string name="keys_invalid">کلیدها نامعتبر یا موجود نیستند</string>
+    <string name="refresh_keys">بروزرسانی کلیدها</string>
+    <string name="loading_model">در حال بارگذاری مدل...</string>
+    <string name="no_model_selected">هیچ مدلی انتخاب نشده</string>
+    <string name="keys_not_configured">کلیدها پیکربندی نشده‌اند</string>
+    <string name="model_not_loaded">مدل بارگذاری نشده</string>
+    <string name="ready_to_chat">آماده برای گفتگو</string>
+    
+    <!-- Model Download -->
+    <string name="available_models">مدل‌های موجود</string>
+    <string name="installed_models">مدل‌های نصب شده</string>
+    <string name="download_model">دانلود مدل</string>
+    <string name="download_progress">پیشرفت دانلود</string>
+    <string name="select_model_file">انتخاب فایل مدل</string>
+    <string name="model_management">مدیریت مدل‌ها</string>
+    
+    <!-- Key Management -->
+    <string name="enter_decryption_password">رمز رمزگشایی را وارد کنید</string>
+    <string name="decrypt_keys">رمزگشایی کلیدها</string>
+    <string name="password_incorrect">رمز اشتباه است</string>
+    <string name="keys_downloaded_successfully">کلیدها با موفقیت دانلود شدند</string>
+    <string name="retry_download">تلاش مجدد</string>
+    
+    <!-- Memory Backup -->
+    <string name="conversation_memory">حافظه گفتگوها</string>
+    <string name="backup_conversations">پشتیبان‌گیری از گفتگوها</string>
+    <string name="restore_conversations">بازیابی گفتگوها</string>
+    <string name="memory_backup_completed">پشتیبان‌گیری حافظه تکمیل شد</string>
+    <string name="memory_restored">حافظه بازیابی شد</string>
+    
+    <!-- Key Setup -->
+    <string name="welcome_to_persian_ai">به دستیار هوش مصنوعی فارسی خوش آمدید</string>
+    <string name="setup_api_keys_description">برای استفاده از قابلیت‌های آنلاین، لطفاً کلیدهای API را پیکربندی کنید</string>
+    <string name="keys_setup_required">برای دسترسی به مدل‌های آنلاین، تنظیم کلیدها ضروری است</string>
+    <string name="setup_api_keys">تنظیم کلیدهای API</string>
+    <string name="skip_for_now">فعلاً رد کن</string>
+    <string name="offline_mode_available">حالت آفلاین بدون نیاز به کلید در دسترس است</string>
+    <string name="close">بستن</string>
+    
+    <!-- Enhanced UI Strings -->
+    <string name="connection_lost">اتصال قطع شد</string>
+    <string name="connected">متصل</string>
+    <string name="disconnected">قطع</string>
+    <string name="online_chat_welcome">به چت آنلاین خوش آمدید</string>
+    <string name="offline_chat_welcome">به چت آفلاین خوش آمدید</string>
+    <string name="online_chat_description">با قدرتمندترین مدل‌های هوش مصنوعی گفتگو کنید</string>
+    <string name="offline_chat_description">بدون نیاز به اینترنت و با حفظ حریم خصوصی چت کنید</string>
+    
+    <!-- App Shortcuts -->
+    <string name="start_online_chat">شروع چت آنلاین</string>
+    <string name="voice_assistant">دستیار صوتی</string>
+    <string name="start_voice_assistant">شروع دستیار صوتی</string>
+    <string name="shortcut_disabled">میانبر غیرفعال است</string>
+    <string name="start_offline_chat">شروع چت آفلاین</string>
+    <string name="type_a_message">پیام خود را تایپ کنید...</string>
+</resources>

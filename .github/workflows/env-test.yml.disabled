@@ -1,0 +1,52 @@
+name: Environment Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  env-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Check environment
+      run: |
+        echo "=== System Info ==="
+        uname -a
+        echo ""
+        echo "=== Available space ==="
+        df -h
+        echo ""
+        echo "=== Memory ==="
+        free -h
+        echo ""
+        echo "=== Files in root ==="
+        ls -la
+        echo ""
+        echo "=== Check gradlew ==="
+        if [ -f "gradlew" ]; then
+          echo "gradlew exists"
+          ls -la gradlew
+          head -5 gradlew
+        else
+          echo "gradlew missing"
+        fi
+    
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Java info
+      run: |
+        echo "=== Java Version ==="
+        java -version
+        echo ""
+        echo "=== JAVA_HOME ==="
+        echo $JAVA_HOME
+        echo ""
+        echo "=== PATH ==="
+        echo $PATH

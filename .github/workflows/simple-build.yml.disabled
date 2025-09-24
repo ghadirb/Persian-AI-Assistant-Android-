@@ -1,0 +1,195 @@
+name: Manual Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'نوع بیلد (Build Type)'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+        - debug
+        - release
+      include_aab:
+        description: 'ساخت AAB (برای Play Store)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  manual-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 34
+        
+    - name: Cache Gradle Dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+          ~/.android/build-cache
+        key: ${{ runner.os }}-gradle-manual-${{ hashFiles('**/*.gradle*') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-manual-
+          ${{ runner.os }}-gradle-
+          
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      
+    - name: Create required directories
+      run: mkdir -p app/schemas
+      
+    - name: Validate Build Configuration
+      run: |
+        echo "=== Build Configuration ==="
+        echo "Build Type: ${{ github.event.inputs.build_type }}"
+        echo "Include AAB: ${{ github.event.inputs.include_aab }}"
+        echo "Triggered by: ${{ github.actor }}"
+        echo ""
+        echo "=== Project Info ==="
+        ./gradlew --version
+        echo ""
+        echo "=== Keystore Status ==="
+        if [ -f "app/debug.keystore" ]; then
+          echo "✅ Debug keystore available"
+        else
+          echo "❌ Debug keystore missing"
+        fi
+      
+    - name: Clean Project
+      run: ./gradlew clean --stacktrace
+      
+    - name: Build Debug APK
+      if: github.event.inputs.build_type == 'debug'
+      run: |
+        echo "🔨 Building Debug APK..."
+        ./gradlew assembleDebug --stacktrace --info
+        echo "✅ Debug APK build completed"
+      
+    - name: Build Release APK
+      if: github.event.inputs.build_type == 'release'
+      run: |
+        echo "🔨 Building Release APK..."
+        ./gradlew assembleRelease --stacktrace --info
+        echo "✅ Release APK build completed"
+        
+    - name: Build AAB (Android App Bundle)
+      if: github.event.inputs.build_type == 'release' && github.event.inputs.include_aab == 'true'
+      run: |
+        echo "📦 Building Android App Bundle..."
+        ./gradlew bundleRelease --stacktrace --info
+        echo "✅ AAB build completed"
+      
+    - name: Verify Build Results
+      run: |
+        echo "=== Build Verification ==="
+        
+        if [ "${{ github.event.inputs.build_type }}" == "debug" ]; then
+          if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+            echo "✅ Debug APK created successfully"
+            ls -lh app/build/outputs/apk/debug/app-debug.apk
+          else
+            echo "❌ Debug APK not found"
+            find app/build/outputs -name "*.apk" 2>/dev/null || echo "No APK files found"
+          fi
+        fi
+        
+        if [ "${{ github.event.inputs.build_type }}" == "release" ]; then
+          if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
+            echo "✅ Release APK created successfully"
+            ls -lh app/build/outputs/apk/release/app-release-unsigned.apk
+          else
+            echo "❌ Release APK not found"
+            find app/build/outputs -name "*.apk" 2>/dev/null || echo "No APK files found"
+          fi
+          
+          if [ "${{ github.event.inputs.include_aab }}" == "true" ]; then
+            if [ -f "app/build/outputs/bundle/release/app-release.aab" ]; then
+              echo "✅ AAB created successfully"
+              ls -lh app/build/outputs/bundle/release/app-release.aab
+            else
+              echo "❌ AAB not found"
+            fi
+          fi
+        fi
+        
+    - name: Upload Debug APK
+      if: github.event.inputs.build_type == 'debug'
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-debug-${{ github.run_number }}
+        path: |
+          app/build/outputs/apk/debug/*.apk
+        retention-days: 14
+        if-no-files-found: error
+        
+    - name: Upload Release APK
+      if: github.event.inputs.build_type == 'release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-release-${{ github.run_number }}
+        path: |
+          app/build/outputs/apk/release/*.apk
+        retention-days: 30
+        if-no-files-found: error
+        
+    - name: Upload AAB
+      if: github.event.inputs.build_type == 'release' && github.event.inputs.include_aab == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-bundle-${{ github.run_number }}
+        path: |
+          app/build/outputs/bundle/release/*.aab
+        retention-days: 30
+        if-no-files-found: warn
+        
+    - name: Build Summary
+      if: always()
+      run: |
+        echo "## 📋 Manual Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Setting | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Build Type | ${{ github.event.inputs.build_type }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Include AAB | ${{ github.event.inputs.include_aab }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Triggered by | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Run Number | ${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "### 📱 Generated Files:" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ github.event.inputs.build_type }}" == "debug" ] && [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+          echo "- ✅ Debug APK" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ github.event.inputs.build_type }}" == "debug" ]; then
+          echo "- ❌ Debug APK (failed)" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ github.event.inputs.build_type }}" == "release" ] && [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
+          echo "- ✅ Release APK" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ github.event.inputs.build_type }}" == "release" ]; then
+          echo "- ❌ Release APK (failed)" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ github.event.inputs.include_aab }}" == "true" ] && [ -f "app/build/outputs/bundle/release/app-release.aab" ]; then
+          echo "- ✅ Android App Bundle" >> $GITHUB_STEP_SUMMARY
+        elif [ "${{ github.event.inputs.include_aab }}" == "true" ]; then
+          echo "- ❌ Android App Bundle (failed)" >> $GITHUB_STEP_SUMMARY
+        fi

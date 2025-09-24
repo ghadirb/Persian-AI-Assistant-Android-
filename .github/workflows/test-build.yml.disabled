@@ -1,0 +1,163 @@
+name: Quick Test Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ test, develop ]
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 34
+        
+    - name: Cache Gradle Dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-test-${{ hashFiles('**/*.gradle*') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-test-
+          ${{ runner.os }}-gradle-
+        
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      
+    - name: Create required directories
+      run: |
+        mkdir -p app/schemas
+        mkdir -p app/build/outputs/apk/debug
+        
+    - name: Validate Project Structure
+      run: |
+        echo "=== Project Validation ==="
+        echo "Root files:"
+        ls -la | head -20
+        echo ""
+        echo "App directory:"
+        ls -la app/ | head -10
+        echo ""
+        echo "Gradle wrapper:"
+        ls -la gradle/wrapper/
+        echo ""
+        echo "Keystore check:"
+        if [ -f "app/debug.keystore" ]; then
+          echo "✅ Debug keystore exists"
+          ls -la app/debug.keystore
+        else
+          echo "❌ Debug keystore missing - this might cause signing issues"
+        fi
+        
+    - name: Check Gradle Version & Configuration
+      run: |
+        echo "=== Gradle Information ==="
+        ./gradlew --version
+        echo ""
+        echo "=== Project Properties ==="
+        ./gradlew properties | grep -E "(version|compileSdk|targetSdk|minSdk)" || true
+        
+    - name: Clean Project
+      run: ./gradlew clean --stacktrace
+      
+    - name: Compile Project (No APK)
+      run: ./gradlew compileDebugSources --stacktrace --info
+      continue-on-error: true
+      
+    - name: Build Debug APK
+      id: build_apk
+      run: |
+        echo "Starting APK build..."
+        if ./gradlew assembleDebug --stacktrace --info; then
+          echo "build_success=true" >> $GITHUB_OUTPUT
+          echo "✅ Build completed successfully"
+        else
+          echo "build_success=false" >> $GITHUB_OUTPUT
+          echo "❌ Build failed"
+          exit 1
+        fi
+        
+    - name: Verify Build Outputs
+      if: always()
+      run: |
+        echo "=== Build Output Analysis ==="
+        
+        # Check for APK files
+        APK_COUNT=$(find app/build/outputs -name "*.apk" 2>/dev/null | wc -l)
+        echo "APK files found: $APK_COUNT"
+        
+        if [ $APK_COUNT -gt 0 ]; then
+          echo "APK Details:"
+          find app/build/outputs -name "*.apk" -exec ls -lh {} \; 2>/dev/null
+          
+          # Get APK info
+          for apk in $(find app/build/outputs -name "*.apk" 2>/dev/null); do
+            echo "APK: $apk"
+            echo "Size: $(du -h "$apk" | cut -f1)"
+          done
+        else
+          echo "❌ No APK files generated"
+          echo "Checking build directory structure:"
+          find app/build -type d 2>/dev/null | head -20 || echo "Build directory not found"
+        fi
+        
+        # Check for build errors
+        if [ -d "app/build/reports" ]; then
+          echo "Build reports available"
+        fi
+        
+    - name: Upload Debug APK
+      if: steps.build_apk.outputs.build_success == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: quick-test-apk-${{ github.run_number }}
+        path: |
+          app/build/outputs/apk/debug/*.apk
+        retention-days: 7
+        if-no-files-found: warn
+        
+    - name: Upload Build Reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-reports-${{ github.run_number }}
+        path: |
+          app/build/reports/
+          app/build/tmp/
+        retention-days: 3
+        if-no-files-found: ignore
+        
+    - name: Build Status Summary
+      if: always()
+      run: |
+        echo "## 🔍 Quick Test Build Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ steps.build_apk.outputs.build_success }}" == "true" ]; then
+          echo "✅ **Build Status**: SUCCESS" >> $GITHUB_STEP_SUMMARY
+          echo "📱 **APK Generated**: Yes" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Build Status**: FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "📱 **APK Generated**: No" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "🏷️ **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "🌿 **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "⏰ **Duration**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY

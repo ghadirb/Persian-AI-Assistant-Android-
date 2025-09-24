@@ -1,0 +1,47 @@
+name: Fixed Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - uses: android-actions/setup-android@v3
+    
+    - name: Setup project
+      run: |
+        chmod +x gradlew
+        echo "=== Checking keystore ==="
+        if [ -f "app/debug.keystore" ]; then
+          echo "Keystore found"
+          ls -la app/debug.keystore
+        else
+          echo "Keystore not found"
+        fi
+    
+    - name: Build APK
+      run: |
+        echo "=== Building APK ==="
+        ./gradlew assembleDebug --console=plain
+    
+    - name: Check results
+      run: |
+        echo "=== Build Results ==="
+        find app/build -name "*.apk" 2>/dev/null || echo "No APK found"
+    
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: fixed-build-apk
+        path: app/build/outputs/apk/debug/*.apk
+        if-no-files-found: ignore

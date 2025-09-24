@@ -1,0 +1,88 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4 -Dorg.gradle.parallel=true"
+  JAVA_OPTS: "-Xmx4g -Xms1g"
+  ANDROID_HOME: /usr/local/lib/android/sdk
+  ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+  ORG_GRADLE_PROJECT_androidxComposeCompiler_reportUndefined: false
+  ORG_GRADLE_PROJECT_androidxComposeCompiler_suppressKotlinVersionCompatibilityCheck: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
+
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        build-tools-version: '34.0.0'
+        ndk-version: '25.1.8937393'
+        cmake-version: '3.22.1'
+
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+
+    - name: Debug info
+      run: |
+        echo "=== System Info ==="
+        uname -a
+        echo "=== Java Version ==="
+        java -version
+        echo "=== Gradle Version ==="
+        ./gradlew --version
+        echo "=== Android SDK Info ==="
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --list
+
+    - name: Build with Gradle
+      run: |
+        ./gradlew build --no-daemon --stacktrace --info --scan
+      continue-on-error: true
+
+    - name: Upload build scan
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-scan
+        path: |
+          **/build/*.html
+          **/build/reports/**/*
+        retention-days: 1
+
+    - name: Upload APK
+      if: success()
+      uses: actions/upload-artifact@v3
+      with:
+        name: app
+        path: app/build/outputs/apk/**/*.apk
+        retention-days: 1
+
+    - name: Upload logs
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: logs
+        path: |
+          **/build/reports/**/*
+          **/build/outputs/logs/*.log
+        retention-days: 1

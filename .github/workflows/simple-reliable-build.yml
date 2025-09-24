@@ -1,0 +1,81 @@
+name: Simple Reliable Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build Type'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+        - debug
+        - release
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'gradle'
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 34
+        build-tools-version: '34.0.0'
+        
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      
+    - name: Create required directories
+      run: |
+        mkdir -p app/schemas
+        mkdir -p app/build/outputs
+        
+    - name: Clean and Build
+      run: |
+        ./gradlew clean
+        if [ "${{ github.event.inputs.build_type }}" = "release" ]; then
+          ./gradlew assembleRelease --stacktrace --info
+        else
+          ./gradlew assembleDebug --stacktrace --info
+        fi
+      env:
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+        
+    - name: List Build Outputs
+      run: |
+        echo "=== Build Outputs ==="
+        find app/build/outputs -type f -name "*.apk" 2>/dev/null || echo "No APK files found"
+        ls -la app/build/outputs/apk/*/
+        
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-assistant-${{ github.event.inputs.build_type || 'debug' }}-${{ github.run_number }}
+        path: app/build/outputs/apk/**/*.apk
+        retention-days: 30
+        if-no-files-found: error
+        
+    - name: Build Summary
+      if: always()
+      run: |
+        echo "## 📱 Persian AI Assistant Build" >> $GITHUB_STEP_SUMMARY
+        echo "- **Build Type:** ${{ github.event.inputs.build_type || 'debug' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Run Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY

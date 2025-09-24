@@ -1,0 +1,241 @@
+name: Production Build & Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build Type'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+        - debug
+        - release
+      create_release:
+        description: 'Create GitHub Release'
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+
+env:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dorg.gradle.parallel=false"
+  JAVA_OPTS: "-Xmx3g -Xms1g"
+
+jobs:
+  build:
+    name: Build Persian AI Assistant
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'gradle'
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 34
+        build-tools-version: '34.0.0'
+        ndk-version: '25.1.8937393'
+        
+    - name: Cache Gradle Dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+          ~/.android/build-cache
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+          
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+      
+    - name: Create required directories
+      run: |
+        mkdir -p app/schemas
+        mkdir -p app/build/outputs
+        
+    - name: Validate Gradle Wrapper
+      uses: gradle/wrapper-validation-action@v1
+      
+    - name: Check Project Structure
+      run: |
+        echo "=== Root Directory ==="
+        ls -la
+        echo "=== App Directory ==="
+        ls -la app/ || echo "App directory not found"
+        echo "=== Gradle Wrapper ==="
+        ls -la gradle/wrapper/ || echo "Gradle wrapper not found"
+        
+    - name: Check Gradle Version
+      run: ./gradlew --version
+      
+    - name: Clean Project
+      run: ./gradlew clean --stacktrace --no-daemon
+      
+    - name: Generate Debug Keystore
+      run: |
+        if [ ! -f "app/debug.keystore" ]; then
+          echo "Generating debug keystore..."
+          keytool -genkeypair -v \
+            -keystore app/debug.keystore \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US" \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000
+          echo "✅ Debug keystore generated"
+        else
+          echo "✅ Debug keystore already exists"
+        fi
+        
+    - name: Build Debug APK
+      if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == '' || github.event_name != 'workflow_dispatch'
+      run: |
+        echo "Building Debug APK..."
+        ./gradlew assembleDebug --stacktrace --no-daemon --info
+      env:
+        ORG_GRADLE_PROJECT_androidxComposeCompiler_reportUndefined: false
+        
+    - name: Build Release APK
+      if: github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/')
+      run: |
+        echo "Building Release APK..."
+        ./gradlew assembleRelease --stacktrace --no-daemon --info
+      env:
+        ORG_GRADLE_PROJECT_androidxComposeCompiler_reportUndefined: false
+        
+    - name: Build AAB (Android App Bundle)
+      if: github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/')
+      run: |
+        echo "Building AAB..."
+        ./gradlew bundleRelease --stacktrace --no-daemon --info
+      continue-on-error: true
+      env:
+        ORG_GRADLE_PROJECT_androidxComposeCompiler_reportUndefined: false
+        
+    - name: List Build Outputs
+      run: |
+        echo "=== Build Outputs ==="
+        find app/build/outputs -type f \( -name "*.apk" -o -name "*.aab" \) 2>/dev/null || echo "No build outputs found"
+        echo ""
+        echo "=== APK Details ==="
+        find app/build/outputs -name "*.apk" -exec ls -lh {} \; 2>/dev/null || echo "No APK files"
+        echo ""
+        echo "=== AAB Details ==="
+        find app/build/outputs -name "*.aab" -exec ls -lh {} \; 2>/dev/null || echo "No AAB files"
+        
+    - name: Upload Debug APK
+      if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == '' || github.event_name != 'workflow_dispatch'
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-assistant-debug-${{ github.run_number }}
+        path: |
+          app/build/outputs/apk/debug/*.apk
+        retention-days: 30
+        if-no-files-found: error
+        
+    - name: Upload Release APK
+      if: github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-assistant-release-${{ github.run_number }}
+        path: |
+          app/build/outputs/apk/release/*.apk
+        retention-days: 90
+        if-no-files-found: error
+        
+    - name: Upload AAB
+      if: github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-artifact@v4
+      with:
+        name: persian-ai-assistant-bundle-${{ github.run_number }}
+        path: |
+          app/build/outputs/bundle/release/*.aab
+        retention-days: 90
+        if-no-files-found: ignore
+        
+    - name: Create GitHub Release
+      if: (github.event.inputs.create_release == 'true' || startsWith(github.ref, 'refs/tags/')) && (github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/'))
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          app/build/outputs/apk/release/*.apk
+          app/build/outputs/bundle/release/*.aab
+        tag_name: ${{ github.ref_name }}
+        name: Persian AI Assistant ${{ github.ref_name }}
+        body: |
+          ## Persian AI Assistant Release ${{ github.ref_name }}
+          
+          ### 📱 دانلود فایل‌ها
+          - **APK**: برای نصب مستقیم روی اندروید
+          - **AAB**: برای انتشار در Google Play Store
+          
+          ### 🔧 تغییرات
+          - بهبود عملکرد و رفع باگ‌ها
+          - بروزرسانی کتابخانه‌ها
+          
+          ### 📋 سیستم مورد نیاز
+          - Android 7.0 (API 24) یا بالاتر
+          - حداقل 2GB RAM
+          
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Build Summary
+      if: always()
+      run: |
+        echo "## 📊 Persian AI Assistant Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Build Type | ${{ github.event.inputs.build_type || 'debug' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Trigger | ${{ github.event_name }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Branch/Tag | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Status | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Run Number | ${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Check for build outputs
+        if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+          echo "✅ Debug APK created successfully" >> $GITHUB_STEP_SUMMARY
+          APK_SIZE=$(ls -lh app/build/outputs/apk/debug/app-debug.apk | awk '{print $5}')
+          echo "📦 Debug APK Size: $APK_SIZE" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ] || [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
+          echo "✅ Release APK created successfully" >> $GITHUB_STEP_SUMMARY
+          if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
+            APK_SIZE=$(ls -lh app/build/outputs/apk/release/app-release-unsigned.apk | awk '{print $5}')
+            echo "📦 Release APK Size: $APK_SIZE" >> $GITHUB_STEP_SUMMARY
+          fi
+        fi
+        
+        if [ -f "app/build/outputs/bundle/release/app-release.aab" ]; then
+          echo "✅ AAB created successfully" >> $GITHUB_STEP_SUMMARY
+          AAB_SIZE=$(ls -lh app/build/outputs/bundle/release/app-release.aab | awk '{print $5}')
+          echo "📦 AAB Size: $AAB_SIZE" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📥 دانلود فایل‌ها" >> $GITHUB_STEP_SUMMARY
+        echo "فایل‌های ساخته شده را از بخش **Artifacts** این صفحه دانلود کنید." >> $GITHUB_STEP_SUMMARY

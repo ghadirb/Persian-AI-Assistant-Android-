@@ -1,0 +1,89 @@
+stages:
+  - build
+  - test
+  - deploy
+
+image: alvrme/alpine-android:android-34-jdk17
+
+variables:
+  ANDROID_COMPILE_SDK: "34"
+  ANDROID_BUILD_TOOLS: "34.0.0"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dorg.gradle.parallel=true"
+  ANDROID_SDK_ROOT: "/opt/android-sdk"
+
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - chmod +x ./gradlew
+
+build_debug:
+  stage: build
+  script:
+    - ./gradlew clean assembleDebug --stacktrace --info
+  artifacts:
+    paths:
+      - app/build/outputs/apk/debug/*.apk
+    expire_in: 1 hour
+  only:
+    - main
+    - master
+    - develop
+    - clean-build
+    - merge_requests
+    - hilt-and-gradle-fixes
+
+build_release:
+  stage: build
+  script:
+    - ./gradlew clean assembleRelease --stacktrace --info
+  artifacts:
+    paths:
+      - app/build/outputs/apk/release/*.apk
+    expire_in: 1 hour
+  only:
+    - tags
+    - main
+    - master
+    - clean-build
+    - hilt-and-gradle-fixes
+
+test:
+  stage: test
+  script:
+    - ./gradlew test --stacktrace
+  artifacts:
+    paths:
+      - app/build/reports/tests/
+    reports:
+      junit: app/build/test-results/testReleaseUnitTest/TEST-*.xml
+    expire_in: 1 hour
+  only:
+    - main
+    - master
+    - develop
+    - clean-build
+    - merge_requests
+    - hilt-and-gradle-fixes
+
+pages:
+  stage: deploy
+  script:
+    - ./gradlew clean assembleDebug --stacktrace --info
+    - mkdir -p public/apks
+    - cp app/build/outputs/apk/debug/*.apk public/apks/
+    - echo "<html><body><h1>Persian AI Assistant APK Downloads</h1><ul>" > public/index.html
+    - for apk in app/build/outputs/apk/debug/*.apk; do
+        if [ -f "$apk" ]; then
+          filename=$(basename "$apk")
+          echo "<li><a href=\"apks/$filename\">$filename</a></li>" >> public/index.html
+        fi
+      done
+    - echo "</ul></body></html>" >> public/index.html
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
+  only:
+    - main
+    - master
+    - clean-build
+    - hilt-and-gradle-fixes

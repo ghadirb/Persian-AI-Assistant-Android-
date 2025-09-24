@@ -1,0 +1,60 @@
+name: Ultimate Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup JDK 11 (fallback)
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    
+    - name: Setup Android SDK (alternative)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y android-sdk
+        export ANDROID_HOME=/usr/lib/android-sdk
+        export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+        echo "ANDROID_HOME=/usr/lib/android-sdk" >> $GITHUB_ENV
+        echo "/usr/lib/android-sdk/tools" >> $GITHUB_PATH
+        echo "/usr/lib/android-sdk/platform-tools" >> $GITHUB_PATH
+    
+    - name: Install Android components
+      run: |
+        echo y | sudo /usr/lib/android-sdk/tools/bin/sdkmanager "platforms;android-34"
+        echo y | sudo /usr/lib/android-sdk/tools/bin/sdkmanager "build-tools;34.0.0"
+      continue-on-error: true
+    
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+    
+    - name: Try build without signing
+      run: |
+        echo "Trying build without signing..."
+        ./gradlew assembleDebug -x validateSigningDebug --stacktrace
+      continue-on-error: true
+    
+    - name: Check what was built
+      run: |
+        echo "=== Checking build outputs ==="
+        find . -name "*.apk" -o -name "*.aar" 2>/dev/null || echo "No build outputs found"
+        ls -la app/build/outputs/ 2>/dev/null || echo "No outputs directory"
+    
+    - name: Upload any artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ultimate-build-outputs
+        path: |
+          app/build/outputs/
+          **/*.apk
+          **/*.aar
+        if-no-files-found: ignore
