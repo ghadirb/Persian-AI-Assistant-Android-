@@ -7,6 +7,47 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.persianaiapp.data.model.Memory
 import com.example.persianaiapp.databinding.ItemMemoryBinding
+
+class MemoriesAdapter(
+    private val onMemoryClick: (Memory) -> Unit,
+    private val onMemoryLongClick: (Memory) -> Unit,
+    private val onPinClick: (Memory) -> Unit
+) : ListAdapter<Memory, MemoriesAdapter.MemoryViewHolder>(Diff) {
+
+    object Diff : DiffUtil.ItemCallback<Memory>() {
+        override fun areItemsTheSame(oldItem: Memory, newItem: Memory): Boolean = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Memory, newItem: Memory): Boolean = oldItem == newItem
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoryViewHolder {
+        val binding = ItemMemoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MemoryViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: MemoryViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    inner class MemoryViewHolder(private val binding: ItemMemoryBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(memory: Memory) {
+            binding.titleTextView.text = memory.title
+            binding.contentTextView.text = memory.content
+            binding.root.setOnClickListener { onMemoryClick(memory) }
+            binding.root.setOnLongClickListener { onMemoryLongClick(memory); true }
+            binding.pinButton.setOnClickListener { onPinClick(memory) }
+        }
+    }
+}
+
+package com.example.persianaiapp.ui.memories.adapter
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.example.persianaiapp.data.model.Memory
+import com.example.persianaiapp.databinding.ItemMemoryBinding
 import java.text.SimpleDateFormat
 import java.util.*
 

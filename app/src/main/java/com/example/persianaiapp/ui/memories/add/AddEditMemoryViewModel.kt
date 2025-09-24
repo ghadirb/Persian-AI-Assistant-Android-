@@ -1,5 +1,67 @@
 package com.example.persianaiapp.ui.memories.add
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.persianaiapp.data.model.Memory
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class AddEditMemoryViewModel @Inject constructor(): ViewModel() {
+
+    sealed class AddEditMemoryUiState {
+        object Loading : AddEditMemoryUiState()
+        data class Editing(val memory: Memory) : AddEditMemoryUiState()
+        object Saving : AddEditMemoryUiState()
+        data class Error(val message: String) : AddEditMemoryUiState()
+    }
+
+    sealed class UiEvent {
+        data class ShowMessage(val message: String) : UiEvent()
+        data class MemorySaved(val memoryId: Long) : UiEvent()
+        object MemoryUpdated : UiEvent()
+    }
+
+    private val _uiState = MutableStateFlow<AddEditMemoryUiState>(AddEditMemoryUiState.Editing(Memory()))
+    val uiState: StateFlow<AddEditMemoryUiState> = _uiState
+
+    private val _events = MutableStateFlow<UiEvent?>(null)
+    val events: StateFlow<UiEvent?> = _events
+
+    fun updateTitle(title: String) {
+        val current = (_uiState.value as? AddEditMemoryUiState.Editing)?.memory ?: Memory()
+        _uiState.value = AddEditMemoryUiState.Editing(current.copy(title = title))
+    }
+
+    fun updateContent(content: String) {
+        val current = (_uiState.value as? AddEditMemoryUiState.Editing)?.memory ?: Memory()
+        _uiState.value = AddEditMemoryUiState.Editing(current.copy(content = content))
+    }
+
+    fun updateTags(tags: List<String>) {
+        val current = (_uiState.value as? AddEditMemoryUiState.Editing)?.memory ?: Memory()
+        _uiState.value = AddEditMemoryUiState.Editing(current.copy(tags = tags))
+    }
+
+    fun togglePinned() {
+        val current = (_uiState.value as? AddEditMemoryUiState.Editing)?.memory ?: Memory()
+        _uiState.value = AddEditMemoryUiState.Editing(current.copy(isPinned = !current.isPinned))
+    }
+
+    fun saveMemory() {
+        viewModelScope.launch {
+            // TODO integrate repository
+            _events.value = UiEvent.MemorySaved(1L)
+            _events.value = null
+        }
+    }
+}
+
+package com.example.persianaiapp.ui.memories.add
+
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

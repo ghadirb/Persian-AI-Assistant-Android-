@@ -52,9 +52,9 @@
     <!-- Add Memory Fragment -->
     <fragment
         android:id="@+id/addMemoryFragment"
-        android:name="com.example.persianaiapp.ui.memories.add.AddMemoryFragment"
+        android:name="com.example.persianaiapp.ui.memories.add.AddEditMemoryFragment"
         android:label="@string/add_memory"
-        tools:layout="@layout/fragment_add_memory">
+        tools:layout="@layout/fragment_add_edit_memory">
         <argument
             android:name="memoryId"
             android:defaultValue="-1L"
