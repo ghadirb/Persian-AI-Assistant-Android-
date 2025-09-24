@@ -131,6 +131,9 @@ dependencies {
     
     // JSON
     implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Google Play Services base (provides @integer/google_play_services_version)
+    implementation 'com.google.android.gms:play-services-base:18.3.0'
     
     // Logging
     implementation 'com.jakewharton.timber:timber:5.0.1'
