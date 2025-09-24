@@ -1,31 +1,50 @@
 workflows:
   simple-apk:
     name: Simple APK Build
-    max_build_duration: 20
+    max_build_duration: 30
     instance_type: mac_mini_m1
     environment:
       java: 17
+      vars:
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Xmx4g"
     scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+      
       - name: Build APK
         script: |
-          chmod +x ./build-apk.sh
-          ./build-apk.sh
+          echo "=== Building Persian AI Assistant APK ==="
+          chmod +x ./gradlew
+          ./gradlew clean --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace --info
+          
+          echo "=== Verifying APK ==="
+          find . -name "*.apk" -type f -exec ls -lh {} \;
+          
     artifacts:
+      - "app/build/outputs/apk/debug/*.apk"
       - "*.apk"
+    
+    publishing:
+      email:
+        recipients:
+          - ghadir.baraty@gmail.com
+        notify:
+          success: true
+          failure: true
     
   android-workflow:
     name: Persian AI Assistant Android Build
     max_build_duration: 60
     instance_type: mac_mini_m1
     environment:
-      # android_signing:
-      #   - keystore_reference
       groups:
-        - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put your google-services.json)
+        - google_play
       vars:
         PACKAGE_NAME: "com.example.persianaiapp"
-        GOOGLE_PLAY_TRACK: "internal" # Any default or custom track
-        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+        GOOGLE_PLAY_TRACK: "internal"
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Xmx4g -XX:MaxMetaspaceSize=1g"
       java: 17
       node: 18
     cache:
@@ -49,14 +68,8 @@ workflows:
         script: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
       
-      - name: Get Flutter packages
-        script: |
-          # اگر از Flutter استفاده می‌کنید این بخش را فعال کنید
-          # flutter packages pub get
-          
       - name: Set up keystore
         script: |
-          # Only set up keystore if CM_KEYSTORE is available
           if [ ! -z "$CM_KEYSTORE" ]; then
             echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
             export KEYSTORE_PATH="/tmp/keystore.keystore"
@@ -67,7 +80,6 @@ workflows:
           
       - name: Generate debug keystore
         script: |
-          # Generate debug keystore if it doesn't exist
           if [ ! -f "app/debug.keystore" ]; then
             echo "Generating debug keystore..."
             keytool -genkeypair -v \
@@ -89,23 +101,19 @@ workflows:
           echo "=== Starting Persian AI Assistant Build ==="
           echo "Java version: $(java -version 2>&1 | head -n 1)"
           
-          # Make gradlew executable
           chmod +x ./gradlew
           echo "Made gradlew executable"
           
           echo "Gradle version: $(./gradlew --version | grep Gradle)"
           
-          # Clean project
           echo "=== Cleaning project ==="
           ./gradlew clean --no-daemon --stacktrace
           
-          # Build Debug APK
           echo "=== Building Debug APK ==="
           ./gradlew assembleDebug --no-daemon --stacktrace --info
           
-          # Build Release APK if keystore available
-          echo "=== Building Release APK (if keystore available) ==="
           if [ ! -z "$CM_KEYSTORE" ]; then
+            echo "=== Building Release APK ==="
             ./gradlew assembleRelease --no-daemon --stacktrace --info
             ./gradlew bundleRelease --no-daemon --stacktrace --info
           else
@@ -131,7 +139,6 @@ workflows:
             exit 1
           fi
           
-          # Create artifacts directory and copy files
           echo "=== Preparing artifacts ==="
           mkdir -p artifacts
           find . -name "*.apk" -type f -exec cp {} artifacts/ \;
@@ -150,15 +157,13 @@ workflows:
       - "app/build/outputs/**/*.aab"
       
     publishing:
-      # فقط ارسال ایمیل با فایل APK
       email:
         recipients:
-          - ghadir.baraty@gmail.com  # ایمیل اصلی شما
+          - ghadir.baraty@gmail.com
         notify:
           success: true
           failure: true
           
-  # Workflow برای ساخت APK بدون امضا (برای تست)
   android-unsigned:
     name: Persian AI Assistant - Unsigned APK
     max_build_duration: 30
@@ -166,6 +171,8 @@ workflows:
     environment:
       java: 17
       node: 18
+      vars:
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Xmx4g"
     cache:
       cache_paths:
         - ~/.gradle/caches
@@ -184,8 +191,9 @@ workflows:
           
       - name: Build unsigned APK
         script: |
-          chmod +x ./gradle-build.sh
-          ./gradle-build.sh
+          chmod +x ./gradlew
+          ./gradlew clean --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace --info
           
       - name: Rename APK
         script: |
