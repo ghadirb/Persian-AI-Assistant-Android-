@@ -1,208 +1,73 @@
 workflows:
+  android-workflow:
+    name: Android Workflow
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      android_signing:
+        - keystore_reference
+      groups:
+        - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS)
+      vars:
+        PACKAGE_NAME: "com.example.persianaissistant"
+        GOOGLE_PLAY_TRACK: "internal"
+      java: 17
+      node: 16
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+      - name: Get Flutter packages
+        script: |
+          cd . && ls -la
+      - name: Build Android APK
+        script: |
+          ./gradlew assembleRelease --no-daemon --stacktrace
+    artifacts:
+      - app/build/outputs/**/*.apk
+      - app/build/outputs/**/*.aab
+      - app/build/outputs/**/mapping.txt
+    publishing:
+      email:
+        recipients:
+          - ghadir.baraty@gmail.com
+        notify:
+          success: true
+          failure: true
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: $GOOGLE_PLAY_TRACK
+        submit_as_draft: true
+
   simple-apk:
     name: Simple APK Build
-    max_build_duration: 30
-    instance_type: mac_mini_m1
-    environment:
-      java: 17
-      vars:
-        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Xmx4g"
-    scripts:
-      - name: Set up local.properties
-        script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
-      
-      - name: Build APK
-        script: |
-          echo "=== Building Persian AI Assistant APK ==="
-          chmod +x ./gradlew
-          ./gradlew clean --no-daemon --stacktrace
-          ./gradlew assembleDebug --no-daemon --stacktrace --info
-          
-          echo "=== Verifying APK ==="
-          find . -name "*.apk" -type f -exec ls -lh {} \;
-          
-    artifacts:
-      - "app/build/outputs/apk/debug/*.apk"
-      - "*.apk"
-    
-    publishing:
-      email:
-        recipients:
-          - ghadir.baraty@gmail.com
-        notify:
-          success: true
-          failure: true
-    
-  android-workflow:
-    name: Persian AI Assistant Android Build
     max_build_duration: 60
-    instance_type: mac_mini_m1
+    instance_type: linux_x2
     environment:
-      groups:
-        - google_play
-      vars:
-        PACKAGE_NAME: "com.example.persianaiapp"
-        GOOGLE_PLAY_TRACK: "internal"
-        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Xmx4g -XX:MaxMetaspaceSize=1g"
       java: 17
-      node: 18
-    cache:
-      cache_paths:
-        - ~/.gradle/caches
-        - ~/.android/build-cache
-    triggering:
-      events:
-        - push
-        - tag
-        - pull_request
-      branch_patterns:
-        - pattern: 'main'
-          include: true
-          source: true
-        - pattern: 'develop'
-          include: true
-          source: true
+      vars:
+        GRADLE_OPTS: "-Xmx4g -Dorg.gradle.daemon=false"
     scripts:
       - name: Set up local.properties
         script: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
-      
-      - name: Set up keystore
-        script: |
-          if [ ! -z "$CM_KEYSTORE" ]; then
-            echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
-            export KEYSTORE_PATH="/tmp/keystore.keystore"
-            echo "Keystore configured for signing"
-          else
-            echo "No keystore configured - building unsigned APK"
-          fi
-          
-      - name: Generate debug keystore
-        script: |
-          if [ ! -f "app/debug.keystore" ]; then
-            echo "Generating debug keystore..."
-            keytool -genkeypair -v \
-              -keystore app/debug.keystore \
-              -storepass android \
-              -alias androiddebugkey \
-              -keypass android \
-              -dname "CN=Android Debug,O=Android,C=US" \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000
-            echo "Debug keystore generated successfully"
-          else
-            echo "Debug keystore already exists"
-          fi
-          
-      - name: Build and Verify APK Generation
-        script: |
-          echo "=== Starting Persian AI Assistant Build ==="
-          echo "Java version: $(java -version 2>&1 | head -n 1)"
-          
-          chmod +x ./gradlew
-          echo "Made gradlew executable"
-          
-          echo "Gradle version: $(./gradlew --version | grep Gradle)"
-          
-          echo "=== Cleaning project ==="
-          ./gradlew clean --no-daemon --stacktrace
-          
-          echo "=== Building Debug APK ==="
-          ./gradlew assembleDebug --no-daemon --stacktrace --info
-          
-          if [ ! -z "$CM_KEYSTORE" ]; then
-            echo "=== Building Release APK ==="
-            ./gradlew assembleRelease --no-daemon --stacktrace --info
-            ./gradlew bundleRelease --no-daemon --stacktrace --info
-          else
-            echo "No keystore - skipping release build"
-          fi
-          
-          echo ""
-          echo "=== Verifying build outputs ==="
-          echo "Build directory contents:"
-          ls -la app/build/ || echo "No build directory"
-          
-          echo "Searching for APK files:"
-          APK_FILES=$(find . -name "*.apk" -type f 2>/dev/null)
-          if [ -n "$APK_FILES" ]; then
-            echo "Found APK files:"
-            echo "$APK_FILES"
-            echo "APK file sizes:"
-            find . -name "*.apk" -type f -exec ls -lh {} \;
-          else
-            echo "❌ No APK files found anywhere!"
-            echo "Checking gradle tasks..."
-            ./gradlew tasks --all | grep -i apk || echo "No APK tasks found"
-            exit 1
-          fi
-          
-          echo "=== Preparing artifacts ==="
-          mkdir -p artifacts
-          find . -name "*.apk" -type f -exec cp {} artifacts/ \;
-          find . -name "*.aab" -type f -exec cp {} artifacts/ \;
-          
-          echo "Artifacts directory contents:"
-          ls -la artifacts/
-          
-          echo "=== Build completed successfully ==="
-          
-    artifacts:
-      - "*.apk"
-      - "artifacts/*.apk"
-      - "artifacts/*.aab"
-      - "app/build/outputs/**/*.apk"
-      - "app/build/outputs/**/*.aab"
-      
-    publishing:
-      email:
-        recipients:
-          - ghadir.baraty@gmail.com
-        notify:
-          success: true
-          failure: true
-          
-  android-unsigned:
-    name: Persian AI Assistant - Unsigned APK
-    max_build_duration: 30
-    instance_type: mac_mini_m1
-    environment:
-      java: 17
-      node: 18
-      vars:
-        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Xmx4g"
-    cache:
-      cache_paths:
-        - ~/.gradle/caches
-        - ~/.android/build-cache
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: 'develop'
-          include: true
-          source: true
-    scripts:
-      - name: Set up local.properties
-        script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
-          
-      - name: Build unsigned APK
+      - name: Make gradlew executable
         script: |
           chmod +x ./gradlew
-          ./gradlew clean --no-daemon --stacktrace
-          ./gradlew assembleDebug --no-daemon --stacktrace --info
-          
-      - name: Rename APK
+      - name: Clean project
         script: |
-          cd app/build/outputs/apk/debug
-          mv app-debug.apk persian-ai-assistant-unsigned-$(date +%Y%m%d-%H%M%S).apk
-          
+          ./gradlew clean --no-daemon --stacktrace
+      - name: Build debug APK
+        script: |
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Build release APK
+        script: |
+          ./gradlew assembleRelease --no-daemon --stacktrace
     artifacts:
-      - app/build/outputs/apk/debug/*.apk
-      
+      - app/build/outputs/**/*.apk
+      - app/build/outputs/**/*.aab
+      - app/build/outputs/**/mapping.txt
+      - build/reports/**/*
     publishing:
       email:
         recipients:
