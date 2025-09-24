@@ -1,32 +1,42 @@
 workflows:
-  android-workflow:
-    name: Android Workflow
-    max_build_duration: 120
+  clean-build:
+    name: Clean Persian AI Assistant Build
+    max_build_duration: 40
     instance_type: mac_mini_m1
     environment:
-      android_signing:
-        - keystore_reference
-      groups:
-        - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS)
-      vars:
-        PACKAGE_NAME: "com.example.persianaissistant"
-        GOOGLE_PLAY_TRACK: "internal"
       java: 17
-      node: 16
+      vars:
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Xmx4g"
     scripts:
-      - name: Set up local.properties
+      - name: Setup
         script: |
+          echo "=== Clean Build for Persian AI Assistant ==="
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
-      - name: Get Flutter packages
+          echo "Java: $(java -version 2>&1 | head -n 1)"
+          echo "Android SDK: $ANDROID_SDK_ROOT"
+          
+      - name: Build Debug APK
         script: |
-          cd . && ls -la
-      - name: Build Android APK
-        script: |
-          ./gradlew assembleRelease --no-daemon --stacktrace
+          echo "=== Building Debug APK ==="
+          chmod +x ./gradlew
+          ./gradlew clean --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace
+          
+          echo "=== Verifying APK ==="
+          if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+            echo "✅ APK created successfully!"
+            cp app/build/outputs/apk/debug/app-debug.apk persian-ai-clean.apk
+            ls -lh persian-ai-clean.apk
+          else
+            echo "❌ APK not found!"
+            find . -name "*.apk" -type f
+            exit 1
+          fi
+          
     artifacts:
-      - app/build/outputs/**/*.apk
-      - app/build/outputs/**/*.aab
-      - app/build/outputs/**/mapping.txt
+      - "persian-ai-clean.apk"
+      - "app/build/outputs/apk/debug/*.apk"
+      
     publishing:
       email:
         recipients:
@@ -34,40 +44,117 @@ workflows:
         notify:
           success: true
           failure: true
-      google_play:
-        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: $GOOGLE_PLAY_TRACK
-        submit_as_draft: true
 
   simple-apk:
     name: Simple APK Build
-    max_build_duration: 60
-    instance_type: linux_x2
+    max_build_duration: 30
+    instance_type: mac_mini_m1
     environment:
       java: 17
       vars:
-        GRADLE_OPTS: "-Xmx4g -Dorg.gradle.daemon=false"
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
     scripts:
       - name: Set up local.properties
         script: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
-      - name: Make gradlew executable
+      - name: Build Debug APK Only
         script: |
+          echo "=== Persian AI Assistant Simple Build ==="
           chmod +x ./gradlew
-      - name: Clean project
-        script: |
           ./gradlew clean --no-daemon --stacktrace
-      - name: Build debug APK
-        script: |
-          ./gradlew assembleDebug --no-daemon --stacktrace
-      - name: Build release APK
-        script: |
-          ./gradlew assembleRelease --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace --info
+          
+          echo "=== Verifying APK creation ==="
+          find . -name "*.apk" -type f
+          
+          echo "=== Copying APK files ==="
+          mkdir -p artifacts
+          find . -name "*debug*.apk" -type f -exec cp {} artifacts/ \;
+          find . -name "*debug*.apk" -type f -exec cp {} . \;
+          
+          ls -la artifacts/ || echo "No artifacts directory"
+          ls -la *.apk || echo "No APK in root"
     artifacts:
-      - app/build/outputs/**/*.apk
-      - app/build/outputs/**/*.aab
-      - app/build/outputs/**/mapping.txt
-      - build/reports/**/*
+      - "*.apk"
+      - "artifacts/*.apk"
+      - "app/build/outputs/apk/debug/*.apk"
+
+  no-signing-build:
+    name: Persian AI Assistant - No Signing Required
+    max_build_duration: 45
+    instance_type: mac_mini_m1
+    environment:
+      java: 17
+      vars:
+        PACKAGE_NAME: "com.example.persianaiapp"
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Xmx4g"
+    scripts:
+      - name: Setup environment
+        script: |
+          echo "=== No-Signing Build for Persian AI Assistant ==="
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+          echo "Java: $(java -version 2>&1 | head -n 1)"
+          echo "Android SDK: $ANDROID_SDK_ROOT"
+          
+      - name: Build Debug APK Only
+        script: |
+          echo "=== Building Debug APK (No Signing) ==="
+          chmod +x ./gradlew
+          
+          echo "=== Cleaning project ==="
+          ./gradlew clean --no-daemon --stacktrace
+          
+          echo "=== Building Debug APK ==="
+          ./gradlew assembleDebug --no-daemon --stacktrace
+          
+          echo "=== Verifying APK creation ==="
+          if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+            echo "✅ Debug APK created successfully!"
+            cp app/build/outputs/apk/debug/app-debug.apk persian-ai-no-signing.apk
+            ls -lh persian-ai-no-signing.apk
+          else
+            echo "❌ APK not found!"
+            find . -name "*.apk" -type f
+            exit 1
+          fi
+          
+    artifacts:
+      - "persian-ai-no-signing.apk"
+      - "app/build/outputs/apk/debug/*.apk"
+      
+    publishing:
+      email:
+        recipients:
+          - ghadir.baraty@gmail.com
+        notify:
+          success: true
+          failure: true
+
+  android-unsigned:
+    name: Persian AI Assistant - Unsigned APK
+    max_build_duration: 30
+    instance_type: mac_mini_m1
+    environment:
+      java: 17
+      node: 18
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+          
+      - name: Build unsigned APK
+        script: |
+          chmod +x ./gradle-build.sh
+          ./gradle-build.sh
+          
+      - name: Rename APK
+        script: |
+          cd app/build/outputs/apk/debug
+          mv app-debug.apk persian-ai-assistant-unsigned-$(date +%Y%m%d-%H%M%S).apk
+          
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
+      
     publishing:
       email:
         recipients:
