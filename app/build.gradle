@@ -86,6 +86,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.7.0'
     
     // Activity & Fragment
     implementation 'androidx.activity:activity-compose:1.8.1'
@@ -97,6 +98,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3:1.1.2'
     implementation 'androidx.compose.runtime:runtime-livedata'
+    implementation 'androidx.compose.material:material-icons-extended'
     
     // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.4'
@@ -123,6 +125,7 @@ dependencies {
     
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
     
     // Network
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -147,6 +150,10 @@ dependencies {
     
     // Security
     implementation 'com.google.crypto.tink:tink-android:1.10.0'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
+    // Voice (Vosk)
+    implementation 'com.alphacephei:vosk-android:0.3.47'
     
     // Testing
     testImplementation 'junit:junit:4.13.2'
