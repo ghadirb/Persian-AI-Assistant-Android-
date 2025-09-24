@@ -2,7 +2,7 @@
 buildscript {
     ext {
         // Core - Updated versions
-        kotlin_version = '1.9.10'
+        kotlin_version = '1.9.20'
         agp_version = '8.1.2'
         
         // Compose
@@ -33,7 +33,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.2'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20'
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.7.5"
         
