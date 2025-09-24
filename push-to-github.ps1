@@ -1,5 +1,5 @@
-$repoPath = "c:\Users\Admin\CascadeProjects\PersianAIAssistant"
-$githubToken = "YOUR_GITHUB_TOKEN_HERE"
+$repoPath = "c:\Users\Admin\CascadeProjects\PersianAIAssistantAndroid"
+$githubToken = "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"
 
 Write-Host "=== Persian AI Assistant Git Push Script ===" -ForegroundColor Green
 
@@ -20,18 +20,11 @@ if ($status) {
 
     # Commit changes
     Write-Host "Committing changes..." -ForegroundColor Yellow
-    git commit -m "🔧 Fix build issues: Hilt version consistency, improved CI/CD
-
-- Fixed Hilt version inconsistency (1.1.0 → 2.48)
-- Added missing version variables for biometric, junit, test-junit, espresso
-- Created fixed-build.yml workflow with better error handling
-- Created .gitlab-ci.yml as alternative build option
-- Improved CodeMagic configuration for better APK detection
-- Enhanced artifact collection in all workflows"
+    git commit -m "🚀 Add minimal-build workflow and comprehensive fixes"
 
     # Set up remote with token
     Write-Host "Setting up remote with token authentication..." -ForegroundColor Yellow
-    git remote set-url origin "https://YOUR_GITHUB_TOKEN_HERE@github.com/ghadirb/Persian-AI-Assistant-Android-.git"
+    git remote set-url origin "https://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@github.com/ghadirb/PersianAIAssistantAndroid.git"
 
     # Push changes
     Write-Host "Pushing changes to GitHub..." -ForegroundColor Yellow
@@ -42,7 +35,7 @@ if ($status) {
     catch {
         Write-Host "❌ Push failed: $($_.Exception.Message)" -ForegroundColor Red
         Write-Host "Trying alternative push method..." -ForegroundColor Yellow
-        git push https://YOUR_GITHUB_TOKEN_HERE@github.com/ghadirb/Persian-AI-Assistant-Android-.git main
+        git push https://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@github.com/ghadirb/PersianAIAssistantAndroid.git main
     }
 }
 else {
