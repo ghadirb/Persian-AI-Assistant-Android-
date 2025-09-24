@@ -1,4 +1,37 @@
 workflows:
+  minimal-build:
+    name: Minimal Persian AI Assistant Build
+    max_build_duration: 20
+    instance_type: mac_mini_m1
+    environment:
+      java: 17
+    scripts:
+      - name: Minimal build
+        script: |
+          echo "=== Minimal Build for Persian AI Assistant ==="
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          chmod +x ./gradlew
+          ./gradlew clean --no-daemon
+          ./gradlew assembleDebug --no-daemon
+          
+          if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+            cp app/build/outputs/apk/debug/app-debug.apk persian-ai-minimal.apk
+            echo "SUCCESS: APK created"
+            ls -lh persian-ai-minimal.apk
+          else
+            echo "ERROR: APK not found"
+            find . -name "*.apk" -type f
+            exit 1
+          fi
+    artifacts:
+      - "persian-ai-minimal.apk"
+    publishing:
+      email:
+        recipients:
+          - ghadir.baraty@gmail.com
+        notify:
+          success: true
+          failure: true
   debug-only:
     name: Persian AI Assistant - Debug APK Only
     max_build_duration: 25
