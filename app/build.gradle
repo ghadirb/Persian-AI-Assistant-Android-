@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt' // ✅ اضافه شد
+    id 'kotlin-kapt' // ✅ اضافه شد برای رفع خطای kapt
     id 'com.google.dagger.hilt.android'
     id 'com.google.gms.google-services'
 }
@@ -61,7 +61,7 @@ dependencies {
     implementation 'com.google.dagger:hilt-android:2.48'
     kapt 'com.google.dagger:hilt-compiler:2.48'
     implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'org.vosk:vosk-android:0.3.32'
+    implementation 'org.vosk:vosk-android:0.3.32' // ✅ جایگزین فایل .aar
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
