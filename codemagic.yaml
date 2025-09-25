@@ -1,13 +1,13 @@
 workflows:
-  debug-build:
-    name: Debug Build Free
+  build-with-aar:
+    name: Build APK + AAR
     environment:
       java: 17
+      android: sdk-34
 
     scripts:
       - name: Set up local.properties
-        script: |
-          echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
+        script: echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
 
       - name: Create dummy google-services.json
         script: |
@@ -29,20 +29,18 @@ workflows:
             ]
           }' > app/google-services.json
 
-      - name: Ensure gradlew is executable
-        script: |
-          chmod +x gradlew
+      - name: Make gradlew executable
+        script: chmod +x gradlew
 
       - name: Clean Gradle cache
-        script: |
-          ./gradlew clean --no-daemon
+        script: ./gradlew clean --no-daemon
 
-      - name: Build debug APK
-        script: |
-          ./gradlew assembleDebug --stacktrace --no-daemon
+      - name: Build APK and AAR
+        script: ./gradlew :app:assembleDebug :voskandroid:assembleRelease --no-daemon
 
     artifacts:
       - app/build/outputs/**/*.apk
+      - voskandroid/build/outputs/**/*.aar
 
     publishing:
       email:
