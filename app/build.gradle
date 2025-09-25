@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt' // ✅ اضافه شد برای رفع خطای kapt
+    id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
     id 'com.google.gms.google-services'
 }
@@ -60,8 +60,8 @@ dependencies {
     implementation 'androidx.hilt:hilt-navigation-compose:1.1.0'
     implementation 'com.google.dagger:hilt-android:2.48'
     kapt 'com.google.dagger:hilt-compiler:2.48'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'org.vosk:vosk-android:0.3.32' // ✅ جایگزین فایل .aar
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0' // ✅ نسخه مشخص شد
+    implementation 'org.vosk:vosk-android:0.3.32'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
