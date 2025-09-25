@@ -29,14 +29,16 @@ workflows:
             ]
           }' > app/google-services.json
 
-      - name: Clean Gradle cache
+      - name: Ensure gradlew is executable
         script: |
           chmod +x gradlew
+
+      - name: Clean Gradle cache
+        script: |
           ./gradlew clean --no-daemon
 
       - name: Build debug APK
         script: |
-          chmod +x gradlew
           ./gradlew assembleDebug --stacktrace --no-daemon
 
     artifacts:
