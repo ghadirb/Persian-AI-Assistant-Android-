@@ -5,7 +5,7 @@
         android:label="Persian AI Assistant"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/Theme.PersianAIApp">
+        android:theme="@style/Theme.Material3.DayNight.NoActionBar"> <!-- ✅ استایل Material3 -->
 
         <activity
             android:name=".MainActivity"
