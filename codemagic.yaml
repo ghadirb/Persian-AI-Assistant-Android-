@@ -3,7 +3,6 @@ workflows:
     name: Build APK + AAR
     environment:
       java: 17
-      android: sdk-34
 
     scripts:
       - name: Set up local.properties
