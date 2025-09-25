@@ -3,10 +3,12 @@ workflows:
     name: Debug Build Free
     environment:
       java: 17
+
     scripts:
       - name: Set up local.properties
         script: |
           echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
+
       - name: Create dummy google-services.json
         script: |
           mkdir -p app/
@@ -26,16 +28,23 @@ workflows:
               }
             ]
           }' > app/google-services.json
+
+      - name: Clean Gradle cache (اختیاری برای رفع خطاهای کش)
+        script: |
+          ./gradlew clean --no-daemon
+
       - name: Build debug APK
         script: |
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace --no-daemon
+
     artifacts:
       - app/build/outputs/**/*.apk
+
     publishing:
       email:
         recipients:
-          - your-email@example.com  # ایمیل خودتون رو بذارید
+          - your-email@example.com # ایمیل خودتون رو بذارید
         notify:
           success: true
           failure: true
