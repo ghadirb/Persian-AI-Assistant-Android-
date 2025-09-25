@@ -1,10 +1,10 @@
 pluginManagement {
     repositories {
-        // Iranian mirrors for better connectivity
+        // آینه‌های ایرانی برای سرعت بهتر
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/central' }
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        // Original repositories as fallback
+        // مخازن اصلی به عنوان پشتیبان
         google()
         mavenCentral()
         gradlePluginPortal()
@@ -14,11 +14,9 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
-        // Iranian mirrors for better connectivity
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/central' }
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        // Original repositories as fallback
         google()
         mavenCentral()
         gradlePluginPortal()
@@ -29,4 +27,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "PersianAIAssistant"
 include ':app'
-include ':voskandroid'  // ✅ فقط این خط اضافه شده
+include ':voskandroid' // ✅ اضافه‌شده برای ساخت AAR
