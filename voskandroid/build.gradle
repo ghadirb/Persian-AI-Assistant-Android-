@@ -1,8 +1,10 @@
 plugins {
     id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
+    namespace 'org.vosk'
     compileSdk 34
 
     defaultConfig {
@@ -18,6 +20,11 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+}
+
+repositories {
+    google()
+    mavenCentral()
 }
 
 dependencies {
