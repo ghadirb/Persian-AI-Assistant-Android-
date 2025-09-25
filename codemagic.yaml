@@ -23,9 +23,20 @@ workflows:
                   "android_client_info": {
                     "package_name": "com.example.persianaiapp"
                   }
+                },
+                "api_key": [
+                  {
+                    "current_key": "DUMMY_API_KEY"
+                  }
+                ],
+                "services": {
+                  "appinvite_service": {
+                    "other_platform_oauth_client": []
+                  }
                 }
               }
-            ]
+            ],
+            "configuration_version": "1"
           }' > app/google-services.json
 
       - name: Make gradlew executable
