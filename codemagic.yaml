@@ -31,6 +31,7 @@ workflows:
 
       - name: Clean Gradle cache (اختیاری برای رفع خطاهای کش)
         script: |
+          chmod +x gradlew
           ./gradlew clean --no-daemon
 
       - name: Build debug APK
@@ -44,7 +45,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - your-email@example.com # ایمیل خودتون رو بذارید
+          - your-email@example.com  # ← ایمیل خودت رو اینجا بذار
         notify:
           success: true
           failure: true
