@@ -53,9 +53,7 @@ android {
 repositories {
     google()
     mavenCentral()
-    flatDir {
-        dirs 'libs'
-    }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -69,7 +67,7 @@ dependencies {
     implementation 'com.google.dagger:hilt-android:2.48'
     kapt 'com.google.dagger:hilt-compiler:2.48'
     implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
-    implementation(name: 'vosk-android-0.3.32', ext: 'aar')
+    implementation 'com.github.alphacep:vosk-android:0.3.30'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
