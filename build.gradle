@@ -1,19 +1,12 @@
 buildscript {
-    ext.kotlin_version = "1.9.21"
-    ext.compose_version = "1.5.8"
-    ext.hilt_version = "2.48"
-
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+        classpath 'com.android.tools.build:gradle:8.1.1'
         classpath 'com.google.gms:google-services:4.4.0'
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.48'
     }
 }
 
@@ -21,7 +14,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
     }
 }
 
