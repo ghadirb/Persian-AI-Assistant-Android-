@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         minSdk 24
-        targetSdk 34
+        targetSdk 29 // ✅ سازگار با Android 10
     }
 
     compileOptions {
