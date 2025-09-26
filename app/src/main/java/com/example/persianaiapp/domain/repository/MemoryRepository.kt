@@ -1,19 +1,24 @@
-package com.example.persianaiapp.domain.repository
+package com.example.persianaiapp.data.repository
 
-import com.example.persianaiapp.data.local.entity.Memory
-import com.example.persianaiapp.util.Result
+import com.example.persianaiapp.data.local.dao.MemoryDao
+import com.example.persianaiapp.domain.model.Memory
+import com.example.persianaiapp.domain.repository.MemoryRepository
 import kotlinx.coroutines.flow.Flow
-import java.util.*
+import javax.inject.Inject
 
-interface MemoryRepository {
-    fun getAllMemories(): Flow<List<Memory>>
-    fun getRecentMemories(limit: Int): Flow<List<Memory>>
-    suspend fun getMemoryById(id: Long): Result<Memory>
-    suspend fun saveMemory(memory: Memory): Result<Long>
-    suspend fun updateMemory(memory: Memory): Result<Unit>
-    suspend fun deleteMemory(memory: Memory): Result<Unit>
-    suspend fun togglePinMemory(id: Long, isPinned: Boolean): Result<Unit>
-    suspend fun archiveMemory(id: Long, isArchived: Boolean): Result<Unit>
-    fun searchMemories(query: String): Flow<List<Memory>>
-    fun getMemoriesByTag(tag: String): Flow<List<Memory>>
+class MemoryRepositoryImpl @Inject constructor(
+    private val dao: MemoryDao
+) : MemoryRepository {
+
+    override fun getAllMemories(): Flow<List<Memory>> = dao.getAllMemories()
+
+    override suspend fun insertMemory(memory: Memory) = dao.insertMemory(memory)
+
+    override suspend fun deleteMemory(memory: Memory) = dao.deleteMemory(memory)
+
+    override suspend fun updateMemory(memory: Memory) = dao.updateMemory(memory)
+
+    override fun searchMemories(query: String): Flow<List<Memory>> = dao.searchMemories(query)
+
+    override suspend fun pinMemory(id: Int, isPinned: Boolean) = dao.pinMemory(id, isPinned)
 }
