@@ -3,19 +3,23 @@ workflows:
     name: Android Build
     max_build_duration: 60
     environment:
-      java: 17
-      android:
-        build-tools: "34.0.0"
-        ndk: "21.4.7075529"
+      # فقط نسخه جاوا را مشخص می‌کنیم
+      java: openjdk17
+
     scripts:
       - name: Ensure Gradle wrapper is executable
         script: chmod +x ./gradlew
 
       - name: Install Android SDK components
         script: |
-          yes | sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          # قبول تمام لایسنس‌ها
+          yes | sdkmanager --licenses
+          # ابزارهای پایه SDK
+          yes | sdkmanager "platform-tools"
+          yes | sdkmanager "platforms;android-34"
+          yes | sdkmanager "build-tools;34.0.0"
 
-      - name: Create empty google-services.json if missing
+      - name: Create dummy google-services.json if missing
         script: |
           if [ ! -f app/google-services.json ]; then
             mkdir -p app
