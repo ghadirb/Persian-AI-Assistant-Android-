@@ -5,8 +5,6 @@ workflows:
     environment:
       java: 17
     scripts:
-      - name: Install build tools
-        script: sdkmanager "build-tools;34.0.0" "platforms;android-34"
       - name: Clean Gradle cache
         script: ./gradlew clean
       - name: Build Debug APK
