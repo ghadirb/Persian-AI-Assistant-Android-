@@ -6,6 +6,10 @@ import com.example.persianaiapp.data.local.AppDatabase
 import com.example.persianaiapp.data.local.dao.MemoryDao
 import com.example.persianaiapp.domain.repository.MemoryRepository
 import com.example.persianaiapp.data.repository.MemoryRepositoryImpl
+import com.example.persianaiapp.domain.repository.ChatRepository
+import com.example.persianaiapp.data.repository.ChatRepositoryImpl
+import com.example.persianaiapp.domain.repository.ISettingsRepository
+import com.example.persianaiapp.data.repository.SettingsRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,4 +32,12 @@ object AppModule {
     @Provides
     fun provideMemoryRepository(dao: MemoryDao): MemoryRepository =
         MemoryRepositoryImpl(dao)
+
+    @Provides
+    fun provideChatRepository(): ChatRepository =
+        ChatRepositoryImpl()
+
+    @Provides
+    fun provideSettingsRepository(): ISettingsRepository =
+        SettingsRepositoryImpl()
 }
