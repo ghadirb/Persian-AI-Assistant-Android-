@@ -24,6 +24,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            // در صورت نیاز می‌توانی اینجا تنظیمات مخصوص Debug بگذاری
+        }
     }
 
     compileOptions {
