@@ -2,35 +2,29 @@ workflows:
   android-workflow:
     name: Android Build
     max_build_duration: 60
+
     environment:
-      # فقط نسخه جاوا را مشخص می‌کنیم
-      java: openjdk17
+      # مقدار صحیح برای نسخه Java
+      java: 17
+
+      # نصب خودکار Android SDK
+      android:
+        api-level: "34"
+        build-tools: "34.0.0"
+        ndk: "21.4.7075529"
 
     scripts:
       - name: Ensure Gradle wrapper is executable
-        script: chmod +x ./gradlew
-
-      - name: Install Android SDK components
         script: |
-          # قبول تمام لایسنس‌ها
-          yes | sdkmanager --licenses
-          # ابزارهای پایه SDK
-          yes | sdkmanager "platform-tools"
-          yes | sdkmanager "platforms;android-34"
-          yes | sdkmanager "build-tools;34.0.0"
-
-      - name: Create dummy google-services.json if missing
-        script: |
-          if [ ! -f app/google-services.json ]; then
-            mkdir -p app
-            echo '{}' > app/google-services.json
-          fi
+          chmod +x ./gradlew
 
       - name: Clean
-        script: ./gradlew clean --no-daemon --stacktrace
+        script: |
+          ./gradlew clean --no-daemon --stacktrace
 
       - name: Build Debug APK
-        script: ./gradlew assembleDebug --no-daemon --stacktrace
+        script: |
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
     artifacts:
       - app/build/outputs/**/*.apk
