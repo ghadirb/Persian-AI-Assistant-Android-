@@ -1,13 +1,13 @@
 workflows:
-  android-workflow:
+  android-build:
     name: Android Build
     max_build_duration: 60
 
     environment:
-      # از Java 11 استفاده می‌کنیم تا مرحله Preparing Build Machine بدون خطا رد شود
-      java: 11
+      # حتماً از Java 11 (openjdk11) استفاده می‌کنیم
+      java: openjdk11
 
-      # نصب خودکار Android SDK
+      # تنظیم خودکار SDK برای اندروید ۳۴
       android:
         api-level: "34"
         build-tools: "34.0.0"
@@ -16,20 +16,19 @@ workflows:
     scripts:
       - name: Debug Java version
         script: |
+          echo "===== Java Info ====="
           java -version
           echo "JAVA_HOME=$JAVA_HOME"
+          echo "====================="
 
-      - name: Ensure Gradle wrapper is executable
-        script: |
-          chmod +x ./gradlew
+      - name: Ensure Gradle wrapper executable
+        script: chmod +x ./gradlew
 
-      - name: Clean
-        script: |
-          ./gradlew clean --no-daemon --stacktrace
+      - name: Clean project
+        script: ./gradlew clean --no-daemon --stacktrace
 
       - name: Build Debug APK
-        script: |
-          ./gradlew assembleDebug --no-daemon --stacktrace
+        script: ./gradlew assembleDebug --no-daemon --stacktrace
 
     artifacts:
       - app/build/outputs/**/*.apk
