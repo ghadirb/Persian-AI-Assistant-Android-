@@ -4,7 +4,7 @@ workflows:
     max_build_duration: 60
 
     environment:
-      # از Java 11 استفاده می‌کنیم چون به‌طور پیش‌فرض روی Codemagic موجود است
+      # از Java 11 استفاده می‌کنیم تا مرحله Preparing Build Machine بدون خطا رد شود
       java: 11
 
       # نصب خودکار Android SDK
