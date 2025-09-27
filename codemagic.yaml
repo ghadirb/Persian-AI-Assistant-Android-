@@ -1,61 +1,24 @@
 workflows:
-  build-with-aar:
-    name: Build APK + AAR
+  android-workflow:
+    name: Android Build
+    max_build_duration: 60
     environment:
+      sdk: 34
       java: 17
-
     scripts:
-      - name: Set up local.properties
-        script: echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
-
-      - name: Create dummy google-services.json
-        script: |
-          mkdir -p app/
-          echo '{
-            "project_info": {
-              "project_number": "123456789",
-              "project_id": "dummy-project"
-            },
-            "client": [
-              {
-                "client_info": {
-                  "mobilesdk_app_id": "1:123456789:android:dummy",
-                  "android_client_info": {
-                    "package_name": "com.example.persianaiapp"
-                  }
-                },
-                "api_key": [
-                  {
-                    "current_key": "DUMMY_API_KEY"
-                  }
-                ],
-                "services": {
-                  "appinvite_service": {
-                    "other_platform_oauth_client": []
-                  }
-                }
-              }
-            ],
-            "configuration_version": "1"
-          }' > app/google-services.json
-
-      - name: Make gradlew executable
-        script: chmod +x gradlew
-
+      - name: Install build tools
+        script: sdkmanager "build-tools;34.0.0" "platforms;android-34"
       - name: Clean Gradle cache
-        script: ./gradlew clean --no-daemon
-
-      - name: Build APK and AAR
-        script: ./gradlew :app:assembleDebug :voskandroid:assembleRelease --no-daemon
-
+        script: ./gradlew clean
+      - name: Build Debug APK
+        script: ./gradlew assembleDebug
     artifacts:
       - app/build/outputs/**/*.apk
-      - voskandroid/build/outputs/**/*.aar
-
+      - app/build/outputs/**/*.aab
     publishing:
       email:
         recipients:
-          - your-email@example.com
+          - your@email.com
         notify:
           success: true
           failure: true
