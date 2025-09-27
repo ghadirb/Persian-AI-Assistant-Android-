@@ -4,42 +4,50 @@ workflows:
     max_build_duration: 60
     environment:
       java: 17
+
     scripts:
-      - name: Set executable permission for Gradle wrapper
+      - name: Ensure Gradle wrapper is executable
         script: chmod +x ./gradlew
-      - name: Create dummy google-services.json (safe for debug)
+
+      - name: Create google-services.json if missing (safe for debug)
         script: |
-          mkdir -p app
-          cat > app/google-services.json << 'EOF'
-          {
-            "project_info": {
-              "project_number": "0",
-              "project_id": "dummy-project",
-              "storage_bucket": "dummy.appspot.com"
-            },
-            "client": [
-              {
-                "client_info": {
-                  "mobilesdk_app_id": "1:0:android:dummy",
-                  "android_client_info": { "package_name": "com.example.persianaiapp" }
-                },
-                "oauth_client": [],
-                "api_key": [{ "current_key": "DUMMY" }],
-                "services": {
-                  "appinvite_service": { "other_platform_oauth_client": [] }
+          if [ ! -f app/google-services.json ]; then
+            mkdir -p app
+            cat > app/google-services.json << 'EOF'
+            {
+              "project_info": {
+                "project_number": "0",
+                "project_id": "dummy-project",
+                "storage_bucket": "dummy.appspot.com"
+              },
+              "client": [
+                {
+                  "client_info": {
+                    "mobilesdk_app_id": "1:0:android:dummy",
+                    "android_client_info": { "package_name": "com.example.persianaiapp" }
+                  },
+                  "oauth_client": [],
+                  "api_key": [{ "current_key": "DUMMY" }],
+                  "services": {
+                    "appinvite_service": { "other_platform_oauth_client": [] }
+                  }
                 }
-              }
-            ],
-            "configuration_version": "1"
-          }
-          EOF
-      - name: Clean Gradle cache
+              ],
+              "configuration_version": "1"
+            }
+            EOF
+          fi
+
+      - name: Clean
         script: ./gradlew clean --no-daemon --stacktrace
+
       - name: Build Debug APK
         script: ./gradlew assembleDebug --no-daemon --stacktrace
+
     artifacts:
       - app/build/outputs/**/*.apk
       - app/build/outputs/**/*.aab
+
     publishing:
       email:
         recipients:
