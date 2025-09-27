@@ -4,11 +4,9 @@ workflows:
     max_build_duration: 60
     environment:
       java: 17
-
     scripts:
       - name: Set executable permission for Gradle wrapper
         script: chmod +x ./gradlew
-
       - name: Create dummy google-services.json (safe for debug)
         script: |
           mkdir -p app
@@ -35,17 +33,13 @@ workflows:
             "configuration_version": "1"
           }
           EOF
-
       - name: Clean Gradle cache
         script: ./gradlew clean --no-daemon --stacktrace
-
       - name: Build Debug APK
         script: ./gradlew assembleDebug --no-daemon --stacktrace
-
     artifacts:
       - app/build/outputs/**/*.apk
       - app/build/outputs/**/*.aab
-
     publishing:
       email:
         recipients:
