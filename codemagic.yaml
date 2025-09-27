@@ -16,10 +16,3 @@ workflows:
     artifacts:
       - app/build/outputs/**/*.apk
       - app/build/outputs/**/*.aab
-    publishing:
-      email:
-        recipients:
-          - example@gmail.com
-        notify:
-          success: true
-          failure: true
