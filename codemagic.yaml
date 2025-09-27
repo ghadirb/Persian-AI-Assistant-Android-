@@ -4,10 +4,16 @@ workflows:
     max_build_duration: 60
     environment:
       java: 17
-
+      android:
+        build-tools: "34.0.0"
+        ndk: "21.4.7075529"
     scripts:
       - name: Ensure Gradle wrapper is executable
         script: chmod +x ./gradlew
+
+      - name: Install Android SDK components
+        script: |
+          yes | sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Create empty google-services.json if missing
         script: |
