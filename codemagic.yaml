@@ -9,11 +9,11 @@ workflows:
       - name: Ensure Gradle wrapper is executable
         script: chmod +x ./gradlew
 
-      - name: Create google-services.json if missing (safe for debug)
+      - name: Create dummy google-services.json if missing
         script: |
           if [ ! -f app/google-services.json ]; then
             mkdir -p app
-            cat > app/google-services.json << 'EOF'
+            cat > app/google-services.json <<EOF
             {
               "project_info": {
                 "project_number": "0",
@@ -35,7 +35,7 @@ workflows:
               ],
               "configuration_version": "1"
             }
-            EOF
+EOF
           fi
 
       - name: Clean
