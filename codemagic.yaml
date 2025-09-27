@@ -1,21 +1,22 @@
 workflows:
   android-build:
-    name: Android Build
-    max_build_duration: 60
+    name: Android Build with JDK17
+    max_build_duration: 90
 
+    # حذف java: از environment
     environment:
-      # حتماً از Java 11 (openjdk11) استفاده می‌کنیم
-      java: openjdk11
-
-      # تنظیم خودکار SDK برای اندروید ۳۴
       android:
         api-level: "34"
         build-tools: "34.0.0"
         ndk: "21.4.7075529"
 
     scripts:
-      - name: Debug Java version
+      - name: Install OpenJDK 17
         script: |
+          sudo apt-get update -y
+          sudo apt-get install -y openjdk-17-jdk
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
           echo "===== Java Info ====="
           java -version
           echo "JAVA_HOME=$JAVA_HOME"
@@ -33,11 +34,3 @@ workflows:
     artifacts:
       - app/build/outputs/**/*.apk
       - app/build/outputs/**/*.aab
-
-    publishing:
-      email:
-        recipients:
-          - your@email.com
-        notify:
-          success: true
-          failure: true
