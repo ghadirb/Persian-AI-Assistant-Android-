@@ -9,33 +9,11 @@ workflows:
       - name: Ensure Gradle wrapper is executable
         script: chmod +x ./gradlew
 
-      - name: Create dummy google-services.json if missing
+      - name: Create empty google-services.json if missing
         script: |
           if [ ! -f app/google-services.json ]; then
             mkdir -p app
-            cat > app/google-services.json <<EOF
-            {
-              "project_info": {
-                "project_number": "0",
-                "project_id": "dummy-project",
-                "storage_bucket": "dummy.appspot.com"
-              },
-              "client": [
-                {
-                  "client_info": {
-                    "mobilesdk_app_id": "1:0:android:dummy",
-                    "android_client_info": { "package_name": "com.example.persianaiapp" }
-                  },
-                  "oauth_client": [],
-                  "api_key": [{ "current_key": "DUMMY" }],
-                  "services": {
-                    "appinvite_service": { "other_platform_oauth_client": [] }
-                  }
-                }
-              ],
-              "configuration_version": "1"
-            }
-EOF
+            echo '{}' > app/google-services.json
           fi
 
       - name: Clean
