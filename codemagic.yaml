@@ -1,36 +1,38 @@
 workflows:
-  android-build:
-    name: Android Build with JDK17
+  android-workflow:
+    name: Android Build
     max_build_duration: 90
 
-    # حذف java: از environment
     environment:
+      java: 11
       android:
         api-level: "34"
         build-tools: "34.0.0"
         ndk: "21.4.7075529"
 
     scripts:
-      - name: Install OpenJDK 17
+      - name: Debug environment
         script: |
-          sudo apt-get update -y
-          sudo apt-get install -y openjdk-17-jdk
-          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-          export PATH=$JAVA_HOME/bin:$PATH
-          echo "===== Java Info ====="
+          echo "===== Environment ====="
           java -version
           echo "JAVA_HOME=$JAVA_HOME"
-          echo "====================="
+          sdkmanager --list
+          echo "========================"
 
       - name: Ensure Gradle wrapper executable
         script: chmod +x ./gradlew
 
-      - name: Clean project
-        script: ./gradlew clean --no-daemon --stacktrace
-
-      - name: Build Debug APK
-        script: ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Clean and assemble
+        script: ./gradlew clean assembleDebug --no-daemon --stacktrace
 
     artifacts:
       - app/build/outputs/**/*.apk
       - app/build/outputs/**/*.aab
+
+    publishing:
+      email:
+        recipients:
+          - you@domain.com
+        notify:
+          success: true
+          failure: true
