@@ -1,60 +1,16 @@
 workflows:
-  android-debug:
-    name: Android Debug Build
+  android-simple:
+    name: Android Simple Build
     environment:
       java: "17"
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: main
-          include: true
-        - pattern: master
-          include: true
     scripts:
-      - name: Set up local.properties
+      - name: Set up environment
         script: |
           echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
-      - name: Create dummy google-services.json if not exists
-        script: |
-          if [ ! -f "app/google-services.json" ]; then
-            mkdir -p app/
-            cat > app/google-services.json << 'EOF'
-          {
-            "project_info": {
-              "project_number": "123456789",
-              "project_id": "dummy-project"
-            },
-            "client": [
-              {
-                "client_info": {
-                  "mobilesdk_app_id": "1:123456789:android:dummy",
-                  "android_client_info": {
-                    "package_name": "com.example.persianaiapp"
-                  }
-                },
-                "api_key": [
-                  {
-                    "current_key": "dummy-key"
-                  }
-                ],
-                "services": {
-                  "appinvite_service": {
-                    "other_platform_oauth_client": []
-                  }
-                }
-              }
-            ],
-            "configuration_version": "1"
-          }
-          EOF
-          fi
-      - name: Make gradlew executable
-        script: |
           chmod +x ./gradlew
-      - name: Build debug APK
+      - name: Build APK
         script: |
-          ./gradlew clean assembleDebug --stacktrace --no-daemon
+          ./gradlew clean assembleDebug --stacktrace
     artifacts:
       - app/build/outputs/**/*.apk
     publishing:
