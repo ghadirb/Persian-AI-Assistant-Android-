@@ -3,7 +3,7 @@ workflows:
     name: Android Build
     max_build_duration: 90
     environment:
-      java: openjdk11
+      jdk: 11
     scripts:
       - name: Ensure Gradle wrapper is executable
         script: chmod +x ./gradlew
