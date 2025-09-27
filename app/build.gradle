@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.persianaiapp"
-        minSdk 24
+        minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -57,7 +57,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
     implementation "com.squareup.moshi:moshi-kotlin:1.15.0"
 
-    // ✅ Vosk از MavenCentral
+    // ✅ Vosk از MavenCentral (جایگزین voskandroid)
     implementation "org.vosk:android:0.3.50"
 
     testImplementation "junit:junit:4.13.2"
