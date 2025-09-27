@@ -1,2 +1,22 @@
-// intentionally left blank
-// همه پلاگین‌ها در settings.gradle تعریف شده‌اند
+// build.gradle (Project-level)
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // پلاگین بیلد Gradle
+        classpath "com.android.tools.build:gradle:8.1.0"
+        // در صورت استفاده از Hilt:
+        classpath "com.google.dagger:hilt-android-gradle-plugin:2.44"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        // اگر از JitPack یا سایر مخازن استفاده می‌کنید:
+        maven { url "https://jitpack.io" }
+    }
+}
