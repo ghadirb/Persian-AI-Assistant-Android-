@@ -37,10 +37,10 @@ workflows:
           EOF
 
       - name: Clean Gradle cache
-        script: ./gradlew clean
+        script: ./gradlew clean --no-daemon --stacktrace
 
       - name: Build Debug APK
-        script: ./gradlew assembleDebug
+        script: ./gradlew assembleDebug --no-daemon --stacktrace
 
     artifacts:
       - app/build/outputs/**/*.apk
