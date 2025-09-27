@@ -3,7 +3,6 @@ workflows:
     name: Android Build
     max_build_duration: 60
     environment:
-      sdk: 34
       java: 17
     scripts:
       - name: Install build tools
