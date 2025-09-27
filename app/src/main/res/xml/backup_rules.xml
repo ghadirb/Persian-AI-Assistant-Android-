@@ -1,13 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    <!-- Include user data and preferences -->
-    <include domain="sharedpref" path="."/>
-    <include domain="database" path="."/>
-    <include domain="file" path="conversations/"/>
-    <include domain="file" path="models/"/>
-    <include domain="file" path="backups/"/>
+    <!-- Include user data that should be backed up -->
+    <include domain="sharedpref" path="user_preferences.xml" />
+    <include domain="sharedpref" path="app_settings.xml" />
+    <include domain="sharedpref" path="voice_settings.xml" />
+    <include domain="sharedpref" path="theme_settings.xml" />
     
-    <!-- Exclude sensitive and temporary data -->
-    <exclude domain="sharedpref" path="secure_prefs.xml"/>
-    <exclude domain="database" path="secure_database.db"/>
+    <!-- Include database files that are safe to backup -->
+    <include domain="database" path="chat_history.db" />
+    <include domain="database" path="user_data.db" />
+    
+    <!-- Include important app files -->
+    <include domain="file" path="models/" />
+    <include domain="file" path="backups/" />
+    <include domain="file" path="exports/" />
+    
+    <!-- EXCLUDE sensitive security data -->
+    <exclude domain="sharedpref" path="secure_prefs.xml" />
+    <exclude domain="sharedpref" path="biometric_data.xml" />
+    <exclude domain="sharedpref" path="api_keys.xml" />
+    <exclude domain="sharedpref" path="encryption_keys.xml" />
+    
+    <!-- EXCLUDE sensitive databases -->
+    <exclude domain="database" path="security.db" />
+    <exclude domain="database" path="auth_tokens.db" />
+    <exclude domain="database" path="encrypted_data.db" />
+    
+    <!-- EXCLUDE temporary and cache files -->
+    <exclude domain="file" path="temp/" />
+    <exclude domain="file" path="cache/" />
+    <exclude domain="cache" />
+    <exclude domain="external" path="temp/" />
+    
+    <!-- EXCLUDE voice recordings for privacy -->
+    <exclude domain="file" path="voice_recordings/" />
+    <exclude domain="file" path="audio_cache/" />
+    
+    <!-- EXCLUDE downloaded AI models (too large and can be re-downloaded) -->
+    <exclude domain="file" path="models/large_models/" />
+    <exclude domain="external" path="models/" />
+    
+    <!-- EXCLUDE log files that might contain sensitive data -->
+    <exclude domain="file" path="logs/" />
+    <exclude domain="file" path="debug.log" />
+    <exclude domain="file" path="error.log" />
+    
+    <!-- EXCLUDE any keystore or certificate files -->
+    <exclude domain="file" path="keystore/" />
+    <exclude domain="file" path="certificates/" />
+    <exclude domain="file" path="*.jks" />
+    <exclude domain="file" path="*.p12" />
+    
+    <!-- EXCLUDE device-specific data -->
+    <exclude domain="sharedpref" path="device_id.xml" />
+    <exclude domain="sharedpref" path="hardware_info.xml" />
+    
 </full-backup-content>
