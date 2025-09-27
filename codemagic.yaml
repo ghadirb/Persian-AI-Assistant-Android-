@@ -1,35 +1,21 @@
 workflows:
   android-workflow:
     name: Android Build
-    max_build_duration: 60
+    max_build_duration: 90
 
     environment:
-      # فقط نسخه Java 11 (پیش‌فرض Codemagic)
-      java: 11
+      # استفاده از Java 11 (موجود به‌طور پیش‌فرض روی Codemagic)
+      java: openjdk11
+
+      # نصب خودکار Android SDK components
+      android:
+        api-level: "34"
+        build-tools: "34.0.0"
+        ndk: "21.4.7075529"
 
     scripts:
-      - name: Debug environment
-        script: |
-          echo "===== Java Info ====="
-          java -version
-          echo "JAVA_HOME=$JAVA_HOME"
-          echo "===== SDK Info ====="
-          sdkmanager --list
-
-      - name: Ensure Gradle wrapper executable
+      - name: Ensure Gradle wrapper is executable
         script: chmod +x ./gradlew
-
-      - name: Install Android SDK components
-        script: |
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" "ndk;21.4.7075529"
-
-      - name: Create dummy google-services.json if missing
-        script: |
-          if [ ! -f app/google-services.json ]; then
-            mkdir -p app
-            echo '{}' > app/google-services.json
-          fi
 
       - name: Clean and assembleDebug
         script: ./gradlew clean assembleDebug --no-daemon --stacktrace
