@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.example.persianaiapp.data.local.AppDatabase
 import com.example.persianaiapp.data.local.dao.MemoryDao
+import com.example.persianaiapp.data.local.dao.ChatMessageDao
+import com.example.persianaiapp.data.remote.AIService
 import com.example.persianaiapp.domain.repository.MemoryRepository
 import com.example.persianaiapp.data.repository.MemoryRepositoryImpl
 import com.example.persianaiapp.domain.repository.ChatRepository
@@ -30,14 +32,22 @@ object AppModule {
     fun provideMemoryDao(db: AppDatabase): MemoryDao = db.memoryDao()
 
     @Provides
+    fun provideChatMessageDao(db: AppDatabase): ChatMessageDao = db.chatMessageDao()
+
+    @Provides
+    @Singleton
     fun provideMemoryRepository(dao: MemoryDao): MemoryRepository =
         MemoryRepositoryImpl(dao)
 
     @Provides
-    fun provideChatRepository(): ChatRepository =
-        ChatRepositoryImpl()
+    @Singleton
+    fun provideChatRepository(
+        chatMessageDao: ChatMessageDao,
+        aiService: AIService
+    ): ChatRepository = ChatRepositoryImpl(chatMessageDao, aiService)
 
     @Provides
-    fun provideSettingsRepository(): ISettingsRepository =
-        SettingsRepositoryImpl()
+    @Singleton
+    fun provideSettingsRepository(@ApplicationContext context: Context): ISettingsRepository =
+        SettingsRepositoryImpl(context)
 }
