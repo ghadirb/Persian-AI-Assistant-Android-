@@ -1,23 +1,12 @@
 workflows:
-<<<<<<< HEAD
-  android-workflow:
-    name: Android Workflow
-    max_build_duration: 60
+  simple-apk:
+    name: Simple APK Build
+    max_build_duration: 20
     instance_type: mac_mini_m1
-    integrations:
-      app_store_connect: codemagic
     environment:
-      android_signing:
-        - keystore_reference
-      groups:
-        - google_play_store
+      java: "17"
       vars:
         PACKAGE_NAME: "com.example.persianaiapp"
-        GOOGLE_PLAY_TRACK: internal
-      java: "17"
-      node: "16"
-      xcode: latest
-      cocoapods: default
     cache:
       cache_paths:
         - ~/.gradle/caches
@@ -29,12 +18,49 @@ workflows:
         - tag
         - pull_request
       branch_patterns:
-        - pattern: develop
+        - pattern: main
           include: true
           source: true
         - pattern: master
           include: true
           source: true
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
+      - name: Build debug APK
+        script: |
+          chmod +x ./gradlew
+          ./gradlew clean assembleDebug --stacktrace
+    artifacts:
+      - app/build/outputs/**/*.apk
+      - app/build/outputs/**/*.aab
+    publishing:
+      email:
+        recipients:
+          - ghadir.baraty@gmail.com
+        notify:
+          success: true
+          failure: true
+
+  android-workflow:
+    name: Android Full Workflow
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      java: "17"
+      vars:
+        PACKAGE_NAME: "com.example.persianaiapp"
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.gradle/wrapper
+        - ~/.android/build-cache
+    triggering:
+      events:
+        - push
+        - tag
+      branch_patterns:
         - pattern: main
           include: true
           source: true
@@ -42,42 +68,18 @@ workflows:
       - name: Set up local.properties
         script: |
           echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
-      - name: Get Flutter dependencies
-        script: |
-          echo "Skipping Flutter dependencies - this is a native Android app"
-      - name: Build debug APK
+      - name: Build release APK
         script: |
           chmod +x ./gradlew
-          ./gradlew clean assembleDebug --stacktrace --debug
+          ./gradlew clean assembleRelease --stacktrace
     artifacts:
       - app/build/outputs/**/*.apk
       - app/build/outputs/**/*.aab
       - app/build/outputs/**/mapping.txt
-      - flutter_drive.log
     publishing:
       email:
         recipients:
-          - ghadirb@example.com
-=======
-  android-simple:
-    name: Android Simple Build
-    environment:
-      java: "17"
-    scripts:
-      - name: Set up environment
-        script: |
-          echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
-          chmod +x ./gradlew
-      - name: Build APK
-        script: |
-          ./gradlew clean assembleDebug --stacktrace
-    artifacts:
-      - app/build/outputs/**/*.apk
-    publishing:
-      email:
-        recipients:
-          - your-email@example.com
->>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
+          - ghadir.baraty@gmail.com
         notify:
           success: true
           failure: true
