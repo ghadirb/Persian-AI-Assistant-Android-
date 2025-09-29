@@ -23,9 +23,12 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+<<<<<<< HEAD
         
         // Fix for common build issues
         multiDexEnabled true
+=======
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
     }
 
     buildTypes {
@@ -33,11 +36,17 @@ android {
             applicationIdSuffix ".debug"
             debuggable true
             minifyEnabled false
+<<<<<<< HEAD
             shrinkResources false
         }
         release {
             minifyEnabled false // فعلا false کنید برای تست
             shrinkResources false
+=======
+        }
+        release {
+            minifyEnabled false // فعلا false کنید برای تست
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -72,6 +81,7 @@ android {
             excludes += 'META-INF/LICENSE.txt'
             excludes += 'META-INF/NOTICE'
             excludes += 'META-INF/NOTICE.txt'
+<<<<<<< HEAD
             excludes += 'META-INF/INDEX.LIST'
             excludes += 'META-INF/io.netty.versions.properties'
         }
@@ -81,6 +91,10 @@ android {
     kapt {
         correctErrorTypes = true
     }
+=======
+        }
+    }
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
 }
 
 dependencies {
@@ -88,7 +102,11 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
     implementation 'androidx.activity:activity-compose:1.8.2'
     
+<<<<<<< HEAD
     // Compose BOM - به‌روزترین نسخه
+=======
+    // Compose BOM
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
     implementation platform('androidx.compose:compose-bom:2024.02.00')
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
@@ -101,7 +119,11 @@ dependencies {
     // ViewModel
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
     
+<<<<<<< HEAD
     // Hilt - fixed versions
+=======
+    // Hilt
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
     implementation 'com.google.dagger:hilt-android:2.48'
     kapt 'com.google.dagger:hilt-compiler:2.48'
     implementation 'androidx.hilt:hilt-navigation-compose:1.1.0'
@@ -129,9 +151,12 @@ dependencies {
     // Google Services
     implementation 'com.google.android.gms:play-services-auth:20.7.0'
     
+<<<<<<< HEAD
     // Added MultiDex support
     implementation 'androidx.multidex:multidex:2.0.1'
     
+=======
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
     // Test dependencies
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -141,9 +166,12 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 }
+<<<<<<< HEAD
 
 // اضافه کردن این برای حل مشکل kapt
 kapt {
     correctErrorTypes = true
     useBuildCache = false
 }
+=======
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9

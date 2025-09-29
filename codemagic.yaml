@@ -1,4 +1,5 @@
 workflows:
+<<<<<<< HEAD
   android-workflow:
     name: Android Workflow
     max_build_duration: 60
@@ -57,6 +58,26 @@ workflows:
       email:
         recipients:
           - ghadirb@example.com
+=======
+  android-simple:
+    name: Android Simple Build
+    environment:
+      java: "17"
+    scripts:
+      - name: Set up environment
+        script: |
+          echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
+          chmod +x ./gradlew
+      - name: Build APK
+        script: |
+          ./gradlew clean assembleDebug --stacktrace
+    artifacts:
+      - app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
         notify:
           success: true
           failure: true

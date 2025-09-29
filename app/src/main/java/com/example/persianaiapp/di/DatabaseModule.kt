@@ -8,6 +8,10 @@ import com.example.persianaiapp.data.local.dao.MemoryDao
 import com.example.persianaiapp.data.local.dao.ConversationDao
 import com.example.persianaiapp.data.local.dao.MessageDao
 import com.example.persianaiapp.data.local.dao.UserSettingsDao
+<<<<<<< HEAD
+=======
+import com.example.persianaiapp.data.local.SettingsManager
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
 import com.example.persianaiapp.ai.AIModelManager
 import dagger.Module
 import dagger.Provides
@@ -42,11 +46,28 @@ object DatabaseModule {
         return database.chatMessageDao()
     }
 
+<<<<<<< HEAD
+=======
+    @Provides
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
     fun provideUserSettingsDao(database: AppDatabase): UserSettingsDao {
         return database.userSettingsDao()
     }
 
     @Provides
+<<<<<<< HEAD
+=======
+    fun provideConversationDao(database: AppDatabase): ConversationDao {
+        return database.conversationDao()
+    }
+
+    @Provides
+    fun provideMessageDao(database: AppDatabase): MessageDao {
+        return database.messageDao()
+    }
+
+    @Provides
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
     @Singleton
     fun provideAIModelManager(@ApplicationContext context: Context, settingsManager: SettingsManager): AIModelManager {
         return AIModelManager(context, settingsManager)

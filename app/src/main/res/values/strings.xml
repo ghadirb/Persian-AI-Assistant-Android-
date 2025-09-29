@@ -114,6 +114,7 @@
     <string name="notification_download">دانلود مدل</string>
     <string name="notification_backup">پشتیبان‌گیری</string>
 
+<<<<<<< HEAD
     <!-- Movie Search -->
     <string name="search_movies">جستجوی فیلم‌ها</string>
     <string name="search_movies_placeholder">نام فیلم، ژانر یا کارگردان را جستجو کنید</string>
@@ -121,4 +122,13 @@
     <string name="year_format">سال: %d</string>
     <string name="director_format">کارگردان: %s</string>
     <string name="rating_format">امتیاز: %.1f</string>
+=======
+    <!-- About -->
+    <string name="about">درباره</string>
+    <string name="version">نسخه</string>
+    <string name="privacy_policy">حریم خصوصی</string>
+    <string name="terms_of_service">شرایط استفاده</string>
+    <string name="support">پشتیبانی</string>
+    <string name="contact_us">تماس با ما</string>
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
 </resources>

@@ -100,6 +100,10 @@
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
+<<<<<<< HEAD
+=======
+            </intent-filter>
+>>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
         </activity>
 
         <!-- Work Manager برای دانلود مدل‌ها -->
