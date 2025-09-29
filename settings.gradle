@@ -3,13 +3,10 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-<<<<<<< HEAD
         // مخازن جایگزین برای ایران
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/central' }
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-=======
->>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
     }
 }
 
@@ -19,13 +16,10 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-<<<<<<< HEAD
         // مخازن جایگزین برای ایران
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/central' }
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-=======
->>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
     }
 }
 
