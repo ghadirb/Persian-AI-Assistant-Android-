@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- AI Model Options -->
+    <string-array name="ai_models_online">
+        <item>GPT-4o</item>
+        <item>GPT-4o-mini</item>
+        <item>Claude-3 Opus</item>
+        <item>Claude-3 Sonnet</item>
+        <item>Claude-3 Haiku</item>
+        <item>Gemini 1.5 Pro</item>
+        <item>Gemini 1.5 Flash</item>
+    </string-array>
+    
+    <string-array name="ai_models_offline">
+        <item>Llama 3.1 8B</item>
+        <item>Qwen 2.5 7B</item>
+        <item>Mistral 7B</item>
+        <item>CodeLlama 7B</item>
+        <item>Persian-GPT</item>
+    </string-array>
+    
+    <!-- Language Options -->
+    <string-array name="supported_languages">
+        <item>فارسی</item>
+        <item>English</item>
+        <item>العربية</item>
+        <item>Français</item>
+    </string-array>
+    
+    <string-array name="language_codes">
+        <item>fa</item>
+        <item>en</item>
+        <item>ar</item>
+        <item>fr</item>
+    </string-array>
+    
+    <!-- Voice Recognition Languages -->
+    <string-array name="voice_languages">
+        <item>فارسی (ایران)</item>
+        <item>English (US)</item>
+        <item>English (UK)</item>
+        <item>العربية</item>
+    </string-array>
+    
+    <string-array name="voice_language_codes">
+        <item>fa-IR</item>
+        <item>en-US</item>
+        <item>en-GB</item>
+        <item>ar</item>
+    </string-array>
+    
+    <!-- Theme Options -->
+    <string-array name="theme_options">
+        <item>سیستم (خودکار)</item>
+        <item>روشن</item>
+        <item>تاریک</item>
+        <item>رابط ساده (سالمندان)</item>
+    </string-array>
+    
+    <string-array name="theme_values">
+        <item>system</item>
+        <item>light</item>
+        <item>dark</item>
+        <item>senior</item>
+    </string-array>
+    
+    <!-- Font Size Options -->
+    <string-array name="font_size_options">
+        <item>کوچک</item>
+        <item>متوسط</item>
+        <item>بزرگ</item>
+        <item>خیلی بزرگ</item>
+    </string-array>
+    
+    <string-array name="font_size_values">
+        <item>small</item>
+        <item>medium</item>
+        <item>large</item>
+        <item>extra_large</item>
+    </string-array>
+    
+    <!-- Voice Speed Options -->
+    <string-array name="voice_speed_options">
+        <item>آهسته</item>
+        <item>معمولی</item>
+        <item>سریع</item>
+        <item>خیلی سریع</item>
+    </string-array>
+    
+    <!-- Authentication Methods -->
+    <string-array name="auth_methods">
+        <item>بدون احراز هویت</item>
+        <item>رمز عبور</item>
+        <item>اثر انگشت</item>
+        <item>تشخیص چهره</item>
+        <item>ترکیبی</item>
+    </string-array>
+    
+    <!-- Backup Frequency -->
+    <string-array name="backup_frequency">
+        <item>هرگز</item>
+        <item>روزانه</item>
+        <item>هفتگی</item>
+        <item>ماهانه</item>
+        <item>دستی</item>
+    </string-array>
+    
+    <!-- Integration Apps -->
+    <string-array name="integration_apps">
+        <item>مخاطبین</item>
+        <item>تقویم</item>
+        <item>نقشه‌ها</item>
+        <item>ایمیل</item>
+        <item>مرورگر</item>
+        <item>پیامک</item>
+        <item>تلفن</item>
+        <item>موسیقی</item>
+    </string-array>
+    
+    <!-- Chat Export Formats -->
+    <string-array name="export_formats">
+        <item>متن ساده (TXT)</item>
+        <item>JSON</item>
+        <item>PDF</item>
+        <item>HTML</item>
+    </string-array>
+    
+    <string-array name="export_format_values">
+        <item>txt</item>
+        <item>json</item>
+        <item>pdf</item>
+        <item>html</item>
+    </string-array>
+    
+</resources>

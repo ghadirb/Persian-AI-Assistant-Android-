@@ -1,0 +1,62 @@
+workflows:
+  android-workflow:
+    name: Android Workflow
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    integrations:
+      app_store_connect: codemagic
+    environment:
+      android_signing:
+        - keystore_reference
+      groups:
+        - google_play_store
+      vars:
+        PACKAGE_NAME: "com.example.persianaiapp"
+        GOOGLE_PLAY_TRACK: internal
+      java: "17"
+      node: "16"
+      xcode: latest
+      cocoapods: default
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.gradle/wrapper
+        - ~/.android/build-cache
+    triggering:
+      events:
+        - push
+        - tag
+        - pull_request
+      branch_patterns:
+        - pattern: develop
+          include: true
+          source: true
+        - pattern: master
+          include: true
+          source: true
+        - pattern: main
+          include: true
+          source: true
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
+      - name: Get Flutter dependencies
+        script: |
+          echo "Skipping Flutter dependencies - this is a native Android app"
+      - name: Build debug APK
+        script: |
+          chmod +x ./gradlew
+          ./gradlew clean assembleDebug --stacktrace --debug
+    artifacts:
+      - app/build/outputs/**/*.apk
+      - app/build/outputs/**/*.aab
+      - app/build/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - ghadirb@example.com
+        notify:
+          success: true
+          failure: true

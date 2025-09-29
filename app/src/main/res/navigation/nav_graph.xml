@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_home">
+
+    <!-- Home Fragment -->
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.example.persianaiapp.ui.home.HomeFragment"
+        android:label="@string/nav_home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_chat"
+            app:destination="@id/navigation_chat" />
+    </fragment>
+
+    <!-- Chat Fragment -->
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="com.example.persianaiapp.ui.chat.ChatFragment"
+        android:label="@string/nav_chat"
+        tools:layout="@layout/fragment_chat" />
+
+    <!-- Memories Fragment -->
+    <fragment
+        android:id="@+id/navigation_memories"
+        android:name="com.example.persianaiapp.ui.memories.MemoriesFragment"
+        android:label="@string/nav_memories"
+        tools:layout="@layout/fragment_memories">
+        <action
+            android:id="@+id/action_memories_to_memory_detail"
+            app:destination="@id/memoryDetailFragment" />
+        <action
+            android:id="@+id/action_memories_to_add_memory"
+            app:destination="@id/addMemoryFragment" />
+    </fragment>
+
+    <!-- Memory Detail Fragment -->
+    <fragment
+        android:id="@+id/memoryDetailFragment"
+        android:name="com.example.persianaiapp.ui.memories.detail.MemoryDetailFragment"
+        android:label="@string/memory_details"
+        tools:layout="@layout/fragment_memory_detail">
+        <argument
+            android:name="memoryId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+    </fragment>
+
+    <!-- Add Memory Fragment -->
+    <fragment
+        android:id="@+id/addMemoryFragment"
+        android:name="com.example.persianaiapp.ui.memories.add.AddEditMemoryFragment"
+        android:label="@string/add_memory"
+        tools:layout="@layout/fragment_add_edit_memory">
+        <argument
+            android:name="memoryId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+    </fragment>
+
+    <!-- Settings Fragment -->
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.persianaiapp.ui.settings.SettingsFragment"
+        android:label="@string/nav_settings"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settings_to_model_management"
+            app:destination="@id/modelManagementFragment" />
+        <action
+            android:id="@+id/action_settings_to_backup"
+            app:destination="@id/backupSettingsFragment" />
+    </fragment>
+
+    <!-- Model Management Fragment -->
+    <fragment
+        android:id="@+id/modelManagementFragment"
+        android:name="com.example.persianaiapp.ui.settings.model.ModelManagementFragment"
+        android:label="@string/select_model"
+        tools:layout="@layout/fragment_model_management" />
+
+    <!-- Backup Settings Fragment -->
+    <fragment
+        android:id="@+id/backupSettingsFragment"
+        android:name="com.example.persianaiapp.ui.settings.backup.BackupSettingsFragment"
+        android:label="@string/backup_settings"
+        tools:layout="@layout/fragment_backup_settings" />
+
+</navigation>

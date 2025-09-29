@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">دستیار هوشمند فارسی</string>
+    <string name="app_description">دستیار هوش مصنوعی کامل با پشتیبانی زبان فارسی</string>
+
+    <!-- Main Screen -->
+    <string name="welcome_message">به دستیار هوشمند فارسی خوش آمدید</string>
+    <string name="how_can_i_help">چطور می‌تونم کمکتون کنم؟</string>
+    <string name="start_conversation">شروع گفتگو</string>
+    <string name="voice_input">ورودی صوتی</string>
+    <string name="text_input">ورودی متنی</string>
+
+    <!-- Voice Features -->
+    <string name="listening">در حال گوش دادن...</string>
+    <string name="processing_voice">در حال پردازش صدا...</string>
+    <string name="speak_now">الان صحبت کنید</string>
+    <string name="voice_recognition_error">خطا در تشخیص صدا</string>
+    <string name="voice_not_supported">تشخیص صدا پشتیبانی نمی‌شود</string>
+    <string name="microphone_permission_required">دسترسی به میکروفون لازم است</string>
+
+    <!-- AI Modes -->
+    <string name="online_mode">حالت آنلاین</string>
+    <string name="offline_mode">حالت آفلاین</string>
+    <string name="switch_to_online">تغییر به حالت آنلاین</string>
+    <string name="switch_to_offline">تغییر به حالت آفلاین</string>
+    <string name="no_internet_connection">عدم اتصال به اینترنت</string>
+
+    <!-- AI Models -->
+    <string name="select_ai_model">انتخاب مدل هوش مصنوعی</string>
+    <string name="gpt4_model">GPT-4</string>
+    <string name="claude_model">Claude</string>
+    <string name="gemini_model">Gemini</string>
+    <string name="local_model">مدل محلی</string>
+    <string name="download_model">دانلود مدل</string>
+    <string name="model_downloading">در حال دانلود مدل...</string>
+    <string name="model_download_complete">دانلود مدل تکمیل شد</string>
+    <string name="model_download_failed">خطا در دانلود مدل</string>
+
+    <!-- Security -->
+    <string name="biometric_authentication">احراز هویت بیومتریک</string>
+    <string name="fingerprint_authentication">احراز هویت با اثر انگشت</string>
+    <string name="face_authentication">احراز هویت با چهره</string>
+    <string name="password_authentication">احراز هویت با رمز عبور</string>
+    <string name="enter_password">رمز عبور را وارد کنید</string>
+    <string name="authentication_required">احراز هویت لازم است</string>
+    <string name="authentication_failed">احراز هویت ناموفق</string>
+    <string name="authentication_success">احراز هویت موفق</string>
+
+    <!-- Settings -->
+    <string name="settings">تنظیمات</string>
+    <string name="general_settings">تنظیمات عمومی</string>
+    <string name="voice_settings">تنظیمات صوتی</string>
+    <string name="security_settings">تنظیمات امنیتی</string>
+    <string name="backup_settings">تنظیمات پشتیبان‌گیری</string>
+    <string name="language_settings">تنظیمات زبان</string>
+    <string name="theme_settings">تنظیمات ظاهری</string>
+
+    <!-- Permissions -->
+    <string name="permission_microphone">دسترسی به میکروفون</string>
+    <string name="permission_storage">دسترسی به حافظه</string>
+    <string name="permission_contacts">دسترسی به مخاطبین</string>
+    <string name="permission_location">دسترسی به موقعیت</string>
+    <string name="permission_phone">دسترسی به تلفن</string>
+    <string name="permission_sms">دسترسی به پیامک</string>
+    <string name="permission_camera">دسترسی به دوربین</string>
+    <string name="permission_denied">دسترسی رد شد</string>
+    <string name="permission_explanation">این دسترسی برای عملکرد صحیح برنامه لازم است</string>
+
+    <!-- Chat -->
+    <string name="chat_history">تاریخچه گفتگو</string>
+    <string name="new_chat">گفتگوی جدید</string>
+    <string name="delete_chat">حذف گفتگو</string>
+    <string name="clear_history">پاک کردن تاریخچه</string>
+    <string name="message_hint">پیام خود را بنویسید...</string>
+    <string name="send">ارسال</string>
+    <string name="generating_response">در حال تولید پاسخ...</string>
+
+    <!-- Backup & Sync -->
+    <string name="backup">پشتیبان‌گیری</string>
+    <string name="restore">بازیابی</string>
+    <string name="sync_with_drive">همگام‌سازی با Google Drive</string>
+    <string name="backup_successful">پشتیبان‌گیری موفق</string>
+    <string name="backup_failed">خطا در پشتیبان‌گیری</string>
+    <string name="restore_successful">بازیابی موفق</string>
+    <string name="restore_failed">خطا در بازیابی</string>
+
+    <!-- Integration -->
+    <string name="integration_contacts">یکپارچگی با مخاطبین</string>
+    <string name="integration_calendar">یکپارچگی با تقویم</string>
+    <string name="integration_maps">یکپارچگی با نقشه</string>
+    <string name="integration_email">یکپارچگی با ایمیل</string>
+    <string name="integration_browser">یکپارچگی با مرورگر</string>
+
+    <!-- Errors -->
+    <string name="error_general">خطای عمومی</string>
+    <string name="error_network">خطای شبکه</string>
+    <string name="error_server">خطای سرور</string>
+    <string name="error_authentication">خطای احراز هویت</string>
+    <string name="error_permission">خطای دسترسی</string>
+    <string name="retry">تلاش دوباره</string>
+    <string name="cancel">لغو</string>
+    <string name="ok">تأیید</string>
+
+    <!-- Accessibility -->
+    <string name="content_description_microphone">دکمه میکروفون</string>
+    <string name="content_description_send">دکمه ارسال</string>
+    <string name="content_description_menu">منوی اصلی</string>
+    <string name="content_description_back">بازگشت</string>
+    <string name="content_description_settings">تنظیمات</string>
+
+    <!-- Notifications -->
+    <string name="notification_processing">در حال پردازش درخواست شما</string>
+    <string name="notification_download">دانلود مدل</string>
+    <string name="notification_backup">پشتیبان‌گیری</string>
+
+    <!-- Movie Search -->
+    <string name="search_movies">جستجوی فیلم‌ها</string>
+    <string name="search_movies_placeholder">نام فیلم، ژانر یا کارگردان را جستجو کنید</string>
+    <string name="no_movies_found">فیلمی یافت نشد</string>
+    <string name="year_format">سال: %d</string>
+    <string name="director_format">کارگردان: %s</string>
+    <string name="rating_format">امتیاز: %.1f</string>
+</resources>

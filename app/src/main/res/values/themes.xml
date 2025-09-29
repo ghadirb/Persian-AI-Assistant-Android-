@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    
+    <!-- Base Light Theme -->
+    <style name="Base.Theme.PersianAIApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary Colors -->
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
+        
+        <!-- Secondary Colors -->
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
+        
+        <!-- Tertiary Colors -->
+        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
+        
+        <!-- Background Colors -->
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+        
+        <!-- Error Colors -->
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+        
+        <!-- Status Bar -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        
+        <!-- Navigation Bar -->
+        <item name="android:navigationBarColor" tools:targetApi="l">?attr/colorSurface</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        
+        <!-- Window -->
+        <item name="android:windowBackground">?attr/colorBackground</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        
+        <!-- RTL Support -->
+        <item name="android:layoutDirection">rtl</item>
+        <item name="android:textDirection">rtl</item>
+        
+        <!-- Font Family -->
+        <item name="fontFamily">@font/vazir_regular</item>
+        <item name="android:fontFamily">@font/vazir_regular</item>
+    </style>
+
+    <!-- Main App Theme -->
+    <style name="Theme.PersianAIApp" parent="Base.Theme.PersianAIApp">
+        <!-- Splash Screen -->
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">?attr/colorSurface</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/ic_launcher_foreground</item>
+        <item name="android:windowSplashScreenIconBackgroundColor" tools:targetApi="s">?attr/colorPrimary</item>
+    </style>
+    
+    <!-- Dark Theme -->
+    <style name="Theme.PersianAIApp.Dark" parent="Base.Theme.PersianAIApp">
+        <!-- Primary Colors -->
+        <item name="colorPrimary">@color/md_theme_dark_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_dark_onPrimaryContainer</item>
+        
+        <!-- Secondary Colors -->
+        <item name="colorSecondary">@color/md_theme_dark_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_dark_onSecondaryContainer</item>
+        
+        <!-- Background Colors -->
+        <item name="android:colorBackground">@color/md_theme_dark_background</item>
+        <item name="colorOnBackground">@color/md_theme_dark_onBackground</item>
+        <item name="colorSurface">@color/md_theme_dark_surface</item>
+        <item name="colorOnSurface">@color/md_theme_dark_onSurface</item>
+        
+        <!-- Status Bar -->
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+    </style>
+    
+    <!-- Full Screen Theme for Voice Recognition -->
+    <style name="Theme.PersianAIApp.FullScreen" parent="Theme.PersianAIApp">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    
+    <!-- Senior-Friendly Theme (Large Text & Simple UI) -->
+    <style name="Theme.PersianAIApp.Senior" parent="Theme.PersianAIApp">
+        <item name="android:textSize">22sp</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:padding">16dp</item>
+    </style>
+    
+    <!-- Button Styles -->
+    <style name="Widget.PersianAI.Button" parent="Widget.Material3.Button">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/vazir_medium</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:layout_marginHorizontal">8dp</item>
+    </style>
+    
+    <style name="Widget.PersianAI.Button.Icon" parent="Widget.Material3.Button.Icon">
+        <item name="iconGravity">textStart</item>
+        <item name="android:fontFamily">@font/vazir_medium</item>
+    </style>
+    
+    <!-- Text Styles -->
+    <style name="TextAppearance.PersianAI.Headline1" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/vazir_bold</item>
+        <item name="android:textDirection">rtl</item>
+    </style>
+    
+    <style name="TextAppearance.PersianAI.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/vazir_regular</item>
+        <item name="android:textDirection">rtl</item>
+    </style>
+    
+    <!-- Card Styles -->
+    <style name="Widget.PersianAI.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardElevation">4dp</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="android:layout_margin">8dp</item>
+    </style>
+    
+</resources>

@@ -1,0 +1,27 @@
+workflows:
+  android-test:
+    name: Android Test Build
+    max_build_duration: 30
+    environment:
+      java: "17"
+      android_signing:
+        - keystore_reference
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_HOME" > "$CM_BUILD_DIR/local.properties"
+      - name: Make gradlew executable
+        script: chmod +x ./gradlew
+      - name: Build debug APK
+        script: |
+          ./gradlew clean
+          ./gradlew assembleDebug --stacktrace
+    artifacts:
+      - app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - test@example.com
+        notify:
+          success: true
+          failure: true
