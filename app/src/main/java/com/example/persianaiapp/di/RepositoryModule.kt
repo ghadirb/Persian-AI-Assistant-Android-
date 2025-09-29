@@ -25,8 +25,5 @@ abstract class RepositoryModule {
     abstract fun bindChatRepository(
         chatRepositoryImpl: ChatRepositoryImpl
     ): ChatRepository
-<<<<<<< HEAD
 
-=======
->>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
 }

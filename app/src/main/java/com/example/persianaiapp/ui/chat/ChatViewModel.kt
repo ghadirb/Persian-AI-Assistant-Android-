@@ -5,12 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.persianaiapp.data.local.entity.ChatMessage
 import com.example.persianaiapp.domain.repository.ChatRepository
 import com.example.persianaiapp.domain.repository.MemoryRepository
-<<<<<<< HEAD
-=======
-import com.example.persianaiapp.data.repository.ISettingsRepository
-import com.example.persianaiapp.ai.AIModelManager
-import com.example.persianaiapp.ai.AIServiceManager
->>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
 import com.example.persianaiapp.model.LocalModelManager
 import com.example.persianaiapp.voice.VoicePlayer
 import com.example.persianaiapp.voice.VoiceRecorder
@@ -25,10 +19,7 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val memoryRepository: MemoryRepository,
-<<<<<<< HEAD
     private val movieRepository: MovieRepository,
-=======
->>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
     private val settingsRepository: ISettingsRepository,
     private val aiModelManager: AIModelManager,
     private val aiServiceManager: AIServiceManager,
@@ -279,7 +270,6 @@ class ChatViewModel @Inject constructor(
     private fun generatePersianResponse(userMessage: String): String {
         // Simple rule-based responses for common Persian queries
         val lowerMessage = userMessage.lowercase()
-<<<<<<< HEAD
 
         return when {
             lowerMessage.contains("سلام") || lowerMessage.contains("درود") ->
@@ -312,28 +302,6 @@ class ChatViewModel @Inject constructor(
                 "برای جستجوی فیلم بر اساس ژانر، لطفاً از صفحه جستجوی فیلم‌ها استفاده کنید."
             }
 
-=======
-        
-        return when {
-            lowerMessage.contains("سلام") || lowerMessage.contains("درود") -> 
-                "سلام! چطور می‌تونم کمکتون کنم؟"
-            
-            lowerMessage.contains("چطوری") || lowerMessage.contains("حالت") ->
-                "ممنون، من یک دستیار هوش مصنوعی هستم و همیشه آماده کمک به شما هستم!"
-            
-            lowerMessage.contains("وقت") || lowerMessage.contains("ساعت") ->
-                "متأسفانه من به ساعت دسترسی ندارم، اما می‌تونید از ساعت دستگاهتون استفاده کنید."
-            
-            lowerMessage.contains("نام") || lowerMessage.contains("اسم") ->
-                "من دستیار هوش مصنوعی فارسی شما هستم. می‌تونید هر اسمی که دوست دارید برام انتخاب کنید!"
-            
-            lowerMessage.contains("کمک") ->
-                "البته! من می‌تونم در زمینه‌های مختلفی مثل پاسخ به سوالات، ترجمه، نوشتن متن و بسیاری موارد دیگر کمکتون کنم."
-            
-            lowerMessage.contains("خداحافظ") || lowerMessage.contains("بای") ->
-                "خداحافظ! امیدوارم تونسته باشم کمکتون کنم. موفق باشید!"
-            
->>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
             else -> {
                 val responses = listOf(
                     "این سوال جالبی است. متأسفانه در حالت آفلاین امکانات محدودی دارم.",
@@ -346,7 +314,6 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-<<<<<<< HEAD
     private suspend fun generateMovieSuggestions(userMessage: String): String {
         return try {
             val query = extractMovieQuery(userMessage)
@@ -411,8 +378,6 @@ class ChatViewModel @Inject constructor(
         }?.value ?: ""
     }
 
-=======
->>>>>>> 2f16af6ef4a70a76724f242750d19135f262c5e9
     fun clearError() {
         _uiState.update { it.copy(error = null) }
     }
